@@ -1,4 +1,3 @@
-index.spacedock
-===============
+# Spacedex
 
-Index for Docker
+Spacedock's Docker index.

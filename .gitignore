@@ -14,4 +14,6 @@ results
 npm-debug.log
 node_modules
 
-.*.sw[op]
+# Ignore potential binaries
+spacedex
+index.spacedock
