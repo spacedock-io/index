@@ -16,7 +16,6 @@ var gopath = os.Getenv("GOPATH")
 var Dir string
 
 func init() {
-  // Setup Dir if it's not already set
   if len(Dir) == 0 && len(gopath) > 0 {
     Dir = path.Join(
       gopath,
