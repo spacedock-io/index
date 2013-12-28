@@ -13,3 +13,7 @@ results
 
 npm-debug.log
 node_modules
+
+# Ignore potential binaries
+spacedex
+index.spacedock
