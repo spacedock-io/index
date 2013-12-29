@@ -3,7 +3,6 @@ package main
 import (
   "fmt"
   "github.com/lancecarlson/couchgo"
-  "github.com/southern/logger"
 )
 
 var Couch *couch.Client
@@ -17,14 +16,13 @@ func SetupCouch() {
     global.Get("couch.database").Str()
 
   if len(db) == 0 {
-    globalLog.Log(logger.CRIT,
-      "There was no database specified in the config.")
+    globalLog.Log("c", "There was no database specified in the config.")
   }
 
   url := fmt.Sprintf("%s://%s:%s/%s", proto, host, port, db)
 
   Couch, err = couch.NewClientURL(url)
   if err != nil {
-    globalLog.Log(logger.CRIT, err.Error())
+    globalLog.Log("c", err.Error())
   }
 }

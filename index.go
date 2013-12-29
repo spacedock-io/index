@@ -65,7 +65,7 @@ func main() {
     SetupCouch()
     Routes(server)
 
-    globalLog.Log(logger.INFO, "Index listening on port " + fmt.Sprint(port))
+    globalLog.Log("Index listening on port " + fmt.Sprint(port))
     server.Listen(port)
   }
 
