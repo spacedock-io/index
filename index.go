@@ -7,6 +7,7 @@ import (
   "fmt"
   "github.com/codegangsta/cli"
   "github.com/ricallinson/forgery"
+  "github.com/southern/logger"
   "github.com/stretchr/objx"
   "github.com/yawnt/index.spacedock/config"
   "os"
@@ -14,6 +15,7 @@ import (
 
 var (
   global objx.Map
+  globalLog = logger.New()
 )
 
 func main() {
@@ -60,7 +62,7 @@ func main() {
     NewRedis()
     Routes(server)
 
-    println("Index listening on port " + fmt.Sprint(port))
+    globalLog.Log(logger.INFO, "Index listening on port " + fmt.Sprint(port))
     server.Listen(port)
   }
 

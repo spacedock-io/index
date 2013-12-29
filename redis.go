@@ -1,9 +1,9 @@
 package main
 
 import (
-  "log"
   "github.com/boj/redistore"
   "github.com/garyburd/redigo/redis"
+  "github.com/southern/logger"
   "time"
 )
 
@@ -28,7 +28,7 @@ func NewRedis() {
   RedisConn, err = redis.DialTimeout("tcp",
     global.Get("redis.host").Str(":6379"), ct, wt, rt)
   if err != nil {
-    log.Fatalln(err)
+    globalLog.Log(logger.CRIT, err.Error())
   }
 
   RediStore = redistore.NewRediStore(10, "tcp",
