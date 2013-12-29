@@ -59,6 +59,9 @@ func main() {
       port = int(global.Get("port").Float64())
     }
 
+    globalLog.Debug = global.Get("logger.debug").Bool(false)
+    globalLog.Exit = global.Get("logger.exit").Bool(false)
+
     SetupCouch()
     Routes(server)
 
