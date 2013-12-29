@@ -12,7 +12,7 @@ import (
   "os"
 )
 
-var c objx.Map
+var global objx.Map
 
 func main() {
   // Initialize new CLI app
@@ -46,13 +46,13 @@ func main() {
       config.Dir = dir
     }
 
-    c = config.Load(env)
+    global = config.Load(env)
 
     port := context.Int("port")
     if port == 0 {
       // Bug(Colton): Not quite sure why port is being picked up as Float64 at
       // the moment. Still looking into this. It may be intended functionality.
-      port = int(c.Get("port").Float64())
+      port = int(global.Get("port").Float64())
     }
 
     println("Index listening on port " + fmt.Sprint(port))
