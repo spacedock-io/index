@@ -12,7 +12,9 @@ import (
   "os"
 )
 
-var global objx.Map
+var (
+  global objx.Map
+)
 
 func main() {
   // Initialize new CLI app
@@ -55,8 +57,8 @@ func main() {
       port = int(global.Get("port").Float64())
     }
 
-    NewRedis(global)
-    Routes(global, server)
+    NewRedis()
+    Routes(server)
 
     println("Index listening on port " + fmt.Sprint(port))
     server.Listen(port)

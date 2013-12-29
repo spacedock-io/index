@@ -2,10 +2,9 @@ package main
 
 import (
   "github.com/ricallinson/forgery"
-  "github.com/stretchr/objx"
 )
 
-func Routes(config objx.Map, server *f.Server) {
+func Routes(server *f.Server) {
   /*
     Library repository routes
    */
