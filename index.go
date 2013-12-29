@@ -59,7 +59,7 @@ func main() {
       port = int(global.Get("port").Float64())
     }
 
-    NewRedis()
+    SetupCouch()
     Routes(server)
 
     globalLog.Log(logger.INFO, "Index listening on port " + fmt.Sprint(port))
