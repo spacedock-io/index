@@ -1,5 +1,8 @@
 {
   "port": 8080,
+  "logger": {
+    "debug": true
+  },
   "couch": {
     "host": "localhost",
     "port": 5984,
