@@ -55,8 +55,8 @@ func main() {
       port = int(global.Get("port").Float64())
     }
 
-    Routes(global, server)
     NewRedis(global)
+    Routes(global, server)
 
     println("Index listening on port " + fmt.Sprint(port))
     server.Listen(port)
