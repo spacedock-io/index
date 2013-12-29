@@ -5,15 +5,19 @@ package config
 
 import (
   "github.com/stretchr/objx"
+  "github.com/southern/logger"
   "io/ioutil"
   "log"
   "os"
   "path"
 )
 
-var config objx.Map
-var gopath = os.Getenv("GOPATH")
-var Dir string
+var (
+  Global objx.Map
+  Logger *logger.Logger
+  gopath = os.Getenv("GOPATH")
+  Dir string
+)
 
 func init() {
   if len(Dir) == 0 && len(gopath) > 0 {
@@ -31,7 +35,7 @@ func init() {
 // Load takes an environment, loads the JSON file associated with the
 // environment, and returns an instance of objx.Map for accessing the
 // properties.
-func Load(env string) (config objx.Map) {
+func Load(env string) (Global objx.Map) {
   // Get current directory
   pwd, err := os.Getwd()
   if err != nil {
@@ -58,7 +62,7 @@ func Load(env string) (config objx.Map) {
   }
 
   // Convert from JSON to objx.Map
-  config, err = objx.FromJSON(string(data))
+  Global, err = objx.FromJSON(string(data))
   if err != nil {
     log.Fatalln(err)
   }

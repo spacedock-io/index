@@ -8,14 +8,9 @@ import (
   "github.com/codegangsta/cli"
   "github.com/ricallinson/forgery"
   "github.com/southern/logger"
-  "github.com/stretchr/objx"
   "github.com/yawnt/index.spacedock/config"
+  "github.com/yawnt/index.spacedock/couch"
   "os"
-)
-
-var (
-  global objx.Map
-  globalLog = logger.New()
 )
 
 func main() {
@@ -38,9 +33,9 @@ func main() {
     cli.StringFlag{"config, c", "", "Configuration directory"},
   }
 
-  app.Action = func (context *cli.Context) {
-    env := context.String("env")
-    dir := context.String("config")
+  app.Action = func (c *cli.Context) {
+    env := c.String("env")
+    dir := c.String("config")
 
     // Default to dev if someone enters a blank string
     if len(env) == 0 {
@@ -50,22 +45,23 @@ func main() {
       config.Dir = dir
     }
 
-    global = config.Load(env)
+    config.Global = config.Load(env)
+    config.Logger = logger.New()
 
-    port := context.Int("port")
+    port := c.Int("port")
     if port == 0 {
       // Bug(Colton): Not quite sure why port is being picked up as Float64 at
       // the moment. Still looking into this. It may be intended functionality.
-      port = int(global.Get("port").Float64())
+      port = int(config.Global.Get("port").Float64())
     }
 
-    globalLog.Debug = global.Get("logger.debug").Bool(false)
-    globalLog.Exit = global.Get("logger.exit").Bool(false)
+    config.Logger.Debug = config.Global.Get("logger.debug").Bool(false)
+    config.Logger.Exit = config.Global.Get("logger.exit").Bool(false)
 
-    SetupCouch()
+    couch.Couch = couch.New()
     Routes(server)
 
-    globalLog.Log("Index listening on port " + fmt.Sprint(port))
+    config.Logger.Log("Index listening on port " + fmt.Sprint(port))
     server.Listen(port)
   }
 
