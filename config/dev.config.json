@@ -1,9 +1,8 @@
 {
   "port": 8080,
-  "redis": {
-    "host": "localhost:6379",
-    "connectTimeout": 5,
-    "readTimeout": 30,
-    "writeTimeout": 30
+  "couch": {
+    "host": "localhost",
+    "port": 5984,
+    "database": "spacedex"
   }
 }
