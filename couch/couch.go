@@ -13,14 +13,14 @@ func New() *couch.Client {
 
   proto, host, port, db := config.Global.Get("couch.protocol").Str("http"),
     config.Global.Get("couch.host").Str("localhost"),
-    string(int(config.Global.Get("couch.port").Float64(5984))),
+    int(config.Global.Get("couch.port").Float64(5984)),
     config.Global.Get("couch.database").Str()
 
   if len(db) == 0 {
     config.Logger.Log("c", "There was no database specified in the config.")
   }
 
-  url := fmt.Sprintf("%s://%s:%s/%s", proto, host, port, db)
+  url := fmt.Sprintf("%s://%s:%d/%s", proto, host, port, db)
 
   Couch, err = couch.NewClientURL(url)
   if err != nil {
