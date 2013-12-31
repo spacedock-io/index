@@ -13,7 +13,7 @@ func init() {
 }
 
 func TestUserGetNoSuchUser(t *testing.T) {
-  err, user := models.GetUser("404")
+  user, err := models.GetUser("404")
   if err != nil {
     t.Errorf("Error should be `nil`, got: %s", err)
   }
