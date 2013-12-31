@@ -12,6 +12,6 @@ func NewUser() *User {
 
 func GetUser(name string) (error, *User) {
   ret := &User{}
-  err := couch.Couch.Get("user/" + name, ret)
+  err := couch.Couch.Retrieve("user/" + name, ret)
   return err, ret
 }
