@@ -5,8 +5,10 @@ import (
   "github.com/fjl/go-couchdb"
 )
 
-type User struct {
+var prefix string = "user:"
 
+type User struct {
+  Username string `json:"username"`
 }
 
 func NewUser() *User {
@@ -15,7 +17,7 @@ func NewUser() *User {
 
 func GetUser(name string) (*User, error) {
   ret := &User{}
-  err := couch.Couch.Get("user/" + name, nil, ret)
+  err := couch.Couch.Get(prefix + name, nil, ret)
 
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
