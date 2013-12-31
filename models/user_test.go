@@ -15,9 +15,9 @@ func init() {
 func TestUserGetNoSuchUser(t *testing.T) {
   err, user := models.GetUser("404")
   if err != nil {
-    t.Error("Error while getting user")
+    t.Errorf("Error should be `nil`, got: %s", err)
   }
   if user != nil {
-    t.Error("User should be `nil`")
+    t.Errorf("User should be `nil`, got: %s", user)
   }
 }
