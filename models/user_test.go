@@ -14,9 +14,11 @@ func init() {
 }
 
 func TestUserGet(t *testing.T) {
-  user, err := models.GetUser("mmalecki")
+  username := "mmalecki"
+  user, err := models.GetUser(username)
   assert.Nil(t, err, "Error should be `nil`")
   assert.NotNil(t, user, "User should not be `nil`")
+  assert.Equal(t, user.Username, username, "Username should be correct")
 }
 
 func TestUserGetNoSuchUser(t *testing.T) {
