@@ -28,3 +28,8 @@ func GetUser(name string) (*User, error) {
   }
   return ret, err
 }
+
+func CreateUser(user User) error {
+  _, err := couch.Couch.Put(prefix + user.Username, user)
+  return err
+}

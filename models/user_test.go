@@ -26,3 +26,18 @@ func TestUserGetNoSuchUser(t *testing.T) {
   assert.Nil(t, err, "Error should be `nil`")
   assert.Nil(t, user, "User should be `nil`")
 }
+
+func TestUserCreate(t *testing.T) {
+  username := "foo"
+
+  user := models.User{
+    Username: username,
+  }
+
+  err := models.CreateUser(user)
+  assert.Nil(t, err, "Error should be `nil`")
+
+  getUser, getError := models.GetUser(username)
+  assert.Nil(t, getError, "Get error should be `nil`")
+  assert.Equal(t, getUser.Username, username)
+}
