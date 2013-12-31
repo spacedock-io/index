@@ -2,13 +2,13 @@ package couch
 
 import (
   "fmt"
-  "github.com/dustin/go-couch"
+  "github.com/fjl/go-couchdb"
   "github.com/yawnt/index.spacedock/config"
 )
 
-var Couch couch.Database
+var Couch *couchdb.Database
 
-func New() couch.Database {
+func New() *couchdb.Database {
   var err error
 
   proto, host, port, db := config.Global.Get("couch.protocol").Str("http"),
@@ -20,9 +20,11 @@ func New() couch.Database {
     config.Logger.Log("c", "There was no database specified in the config.")
   }
 
-  url := fmt.Sprintf("%s://%s:%d/%s", proto, host, port, db)
+  url := fmt.Sprintf("%s://%s:%d/", proto, host, port)
 
-  Couch, err = couch.Connect(url)
+  server := couchdb.NewServer(url, nil)
+  Couch = server.Db(db)
+
   if err != nil {
     config.Logger.Log("c", err.Error())
   }

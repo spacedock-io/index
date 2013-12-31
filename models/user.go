@@ -12,6 +12,10 @@ func NewUser() *User {
 
 func GetUser(name string) (error, *User) {
   ret := &User{}
-  err := couch.Couch.Retrieve("user/" + name, ret)
-  return err, ret
+  err := couch.Couch.Get("user/" + name, nil, ret)
+  if err != nil && err.StatusCode == 404 {
+    err = nil
+    ret = nil
+  }
+  return ret, err
 }
