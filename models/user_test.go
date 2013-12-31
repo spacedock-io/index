@@ -41,3 +41,15 @@ func TestUserCreate(t *testing.T) {
   assert.Nil(t, getError, "Get error should be `nil`")
   assert.Equal(t, getUser.Username, username)
 }
+
+func TestUserCreateAlreadyExists(t *testing.T) {
+  username := "mmalecki"
+
+  user := &models.User{
+    Username: username,
+  }
+
+  err := models.CreateUser(user)
+  assert.NotNil(t, err, "Error should not be `nil`")
+  assert.IsType(t, err, models.AlreadyExistsError{})
+}

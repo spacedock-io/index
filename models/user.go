@@ -31,6 +31,12 @@ func GetUser(name string) (*User, error) {
 
 func CreateUser(user *User) error {
   _, err := couch.Couch.Put(prefix + user.Username, user)
+  if err != nil {
+    dberr, ok := err.(couchdb.DatabaseError)
+    if ok && dberr.StatusCode == 409 {
+      err = AlreadyExistsError{}
+    }
+  }
 
   return err
 }
