@@ -30,7 +30,7 @@ func TestUserGetNoSuchUser(t *testing.T) {
 func TestUserCreate(t *testing.T) {
   username := "foo"
 
-  user := models.User{
+  user := &models.User{
     Username: username,
   }
 
