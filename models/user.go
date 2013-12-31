@@ -19,11 +19,7 @@ func GetUser(name string) (*User, error) {
 
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
-    if !ok {
-      return nil, err
-    }
-
-    if dberr.StatusCode == 404 {
+    if ok && dberr.StatusCode == 404 {
       err = nil
       ret = nil
     }
