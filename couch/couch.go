@@ -2,13 +2,13 @@ package couch
 
 import (
   "fmt"
-  "github.com/lancecarlson/couchgo"
+  "github.com/dustin/go-couch"
   "github.com/yawnt/index.spacedock/config"
 )
 
-var Couch *couch.Client
+var Couch couch.Database
 
-func New() *couch.Client {
+func New() couch.Database {
   var err error
 
   proto, host, port, db := config.Global.Get("couch.protocol").Str("http"),
@@ -22,7 +22,7 @@ func New() *couch.Client {
 
   url := fmt.Sprintf("%s://%s:%d/%s", proto, host, port, db)
 
-  Couch, err = couch.NewClientURL(url)
+  Couch, err = couch.Connect(url)
   if err != nil {
     config.Logger.Log("c", err.Error())
   }
