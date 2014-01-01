@@ -27,7 +27,9 @@ func TestUserGetNoSuchUser(t *testing.T) {
   assert.Nil(t, user, "User should be `nil`")
 }
 
-func TestUserCreate(t *testing.T) {
+func TestUserCreateAndDestroy(t *testing.T) {
+  // Since tests are ran in parallel (in goroutines), we need to create and
+  // destroy user in one test.
   username := "foo"
 
   user := &models.User{
@@ -40,6 +42,12 @@ func TestUserCreate(t *testing.T) {
   getUser, getError := models.GetUser(username)
   assert.Nil(t, getError, "Get error should be `nil`")
   assert.Equal(t, getUser.Username, username)
+
+  err = models.DeleteUser(username)
+  assert.Nil(t, err, "Delete error should be `nil`")
+
+  getUser, getError = models.GetUser(username)
+  assert.Nil(t, getUser, "User shouldn't exists after being deleted")
 }
 
 func TestUserCreateAlreadyExists(t *testing.T) {

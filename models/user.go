@@ -9,6 +9,7 @@ var prefix string = "user:"
 
 type User struct {
   Username string `json:"username"`
+  Rev string `json:"_rev,omitempty"`
 }
 
 func NewUser() *User {
@@ -38,5 +39,15 @@ func CreateUser(user *User) error {
     }
   }
 
+  return err
+}
+
+func DeleteUser(name string) error {
+  user, err := GetUser(name)
+  if err != nil {
+    return err
+  }
+
+  _, err = couch.Couch.Delete(prefix + user.Username, user.Rev)
   return err
 }
