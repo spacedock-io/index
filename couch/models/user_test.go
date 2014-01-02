@@ -20,8 +20,6 @@ func init() {
 }
 
 func TestUserCreate(t *testing.T) {
-  // Since tests are ran in parallel (in goroutines), we need to create and
-  // destroy user in one test.
   err := CreateUser(user)
   assert.Nil(t, err, "Error should be `nil`")
 }
