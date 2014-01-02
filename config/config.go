@@ -10,6 +10,7 @@ import (
   "log"
   "os"
   "path"
+  "runtime"
 )
 
 var (
@@ -19,23 +20,27 @@ var (
   Dir string
 )
 
-func init() {
-  if len(Dir) == 0 && len(GoPath) > 0 {
-    Dir = path.Join(
-      GoPath,
-      "src",
-      "github.com",
-      "yawnt",
-      os.Args[0],
-      "config",
-    )
-  }
-}
 
 // Load takes an environment, loads the JSON file associated with the
 // environment, and returns an instance of objx.Map for accessing the
 // properties.
 func Load(env string) (Global objx.Map) {
+  _, file, _, ok := runtime.Caller(0)
+  if ok {
+    Dir = path.Dir(file)
+  } else {
+    if len(GoPath) > 0 {
+      Dir = path.Join(
+        GoPath,
+        "src",
+        "github.com",
+        "spacedock-io",
+        os.Args[0],
+        "config",
+      )
+    }
+  }
+
   // Get current directory
   pwd, err := os.Getwd()
   if err != nil {
