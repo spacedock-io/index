@@ -1,4 +1,3 @@
-// I think I'm starting to understand the Go way.
 package models
 
 import (
