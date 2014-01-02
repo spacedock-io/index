@@ -15,14 +15,14 @@ import (
 var (
   Global objx.Map
   Logger *logger.Logger
-  gopath = os.Getenv("GOPATH")
+  GoPath = os.Getenv("GOPATH")
   Dir string
 )
 
 func init() {
-  if len(Dir) == 0 && len(gopath) > 0 {
+  if len(Dir) == 0 && len(GoPath) > 0 {
     Dir = path.Join(
-      gopath,
+      GoPath,
       "src",
       "github.com",
       "yawnt",
