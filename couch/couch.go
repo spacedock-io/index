@@ -2,27 +2,29 @@ package couch
 
 import (
   "fmt"
-  "github.com/lancecarlson/couchgo"
+  "github.com/fjl/go-couchdb"
   "github.com/yawnt/index.spacedock/config"
 )
 
-var Couch *couch.Client
+var Couch *couchdb.Database
 
-func New() *couch.Client {
+func New() *couchdb.Database {
   var err error
 
   proto, host, port, db := config.Global.Get("couch.protocol").Str("http"),
     config.Global.Get("couch.host").Str("localhost"),
-    string(int(config.Global.Get("couch.port").Float64(5984))),
+    int(config.Global.Get("couch.port").Float64(5984)),
     config.Global.Get("couch.database").Str()
 
   if len(db) == 0 {
     config.Logger.Log("c", "There was no database specified in the config.")
   }
 
-  url := fmt.Sprintf("%s://%s:%s/%s", proto, host, port, db)
+  url := fmt.Sprintf("%s://%s:%d/", proto, host, port)
 
-  Couch, err = couch.NewClientURL(url)
+  server := couchdb.NewServer(url, nil)
+  Couch = server.Db(db)
+
   if err != nil {
     config.Logger.Log("c", err.Error())
   }
