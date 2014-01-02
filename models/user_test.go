@@ -3,9 +3,9 @@ package models_test
 import (
   "testing"
   "github.com/stretchr/testify/assert"
-  "github.com/yawnt/index.spacedock/config"
-  "github.com/yawnt/index.spacedock/couch"
-  "github.com/yawnt/index.spacedock/models"
+  "github.com/spacedock-io/index/config"
+  "github.com/spacedock-io/index/couch"
+  "github.com/spacedock-io/index/models"
 )
 
 func init() {

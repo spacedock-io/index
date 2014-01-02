@@ -7,5 +7,5 @@ test: test-models
 
 
 test-models:
-	go test github.com/yawnt/index.spacedock/models -c
+	go test github.com/spacedock-io/index/models -c
 	./models.test

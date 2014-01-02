@@ -1,7 +1,7 @@
 package models
 
 import (
-  "github.com/yawnt/index.spacedock/couch"
+  "github.com/spacedock-io/index/couch"
   "github.com/fjl/go-couchdb"
 )
 

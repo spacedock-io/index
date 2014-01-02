@@ -3,7 +3,7 @@ package couch
 import (
   "fmt"
   "github.com/fjl/go-couchdb"
-  "github.com/yawnt/index.spacedock/config"
+  "github.com/spacedock-io/index/config"
 )
 
 var Couch *couchdb.Database
