@@ -1,12 +1,20 @@
 // I think I'm starting to understand the Go way.
-package models_test
+package models
 
 import (
   "testing"
   "github.com/stretchr/testify/assert"
   "github.com/spacedock-io/index/config"
   "github.com/spacedock-io/index/couch"
-  "github.com/spacedock-io/index/models"
+)
+
+var (
+  namespace = "spacedock"
+  name = "foo"
+  newRepo = &Repo{
+    Namespace: namespace,
+    Name: name,
+  }
 )
 
 func init() {
@@ -14,49 +22,31 @@ func init() {
   couch.Couch = couch.New()
 }
 
-func TestGetRepoNoSuchRepo(t *testing.T) {
-  repo, err := models.GetRepo("404", "404")
+func TestCreateRepo(t *testing.T) {
+  err := CreateRepo(newRepo)
   assert.Nil(t, err, "Error should be `nil`")
-  assert.Nil(t, repo, "Repo should be `nil`")
 }
 
-func TestCreateGetDeleteRepo(t *testing.T) {
-  namespace := "spacedock"
-  name := "foo"
+func TestRepoAlreadyExists(t *testing.T) {
+  err := CreateRepo(newRepo)
+  assert.NotNil(t, err, "Error should not be `nil`")
+  assert.IsType(t, err, AlreadyExistsError{})
+}
 
-  newRepo := &models.Repo{
-    Namespace: namespace,
-    Name: name,
-  }
-
-  err := models.CreateRepo(newRepo)
-  assert.Nil(t, err, "Error should be `nil`")
-
-  repo, err := models.GetRepo(namespace, name)
+func TestGetRepo(t *testing.T) {
+  repo, err := GetRepo(namespace, name)
   assert.Nil(t, err, "Error should be `nil`")
   assert.NotNil(t, repo, "Repo should not be `nil`")
   assert.Equal(t, repo.Namespace, namespace, "Namespace should be correct")
   assert.Equal(t, repo.Name, name, "Name should be correct")
-
-  err = models.DeleteRepo(namespace, name)
-  assert.Nil(t, err, "Delete error should be `nil`")
-
-  repo, err = models.GetRepo(namespace, name)
-  assert.Nil(t, repo, "Repo shouldn't exists after being deleted")
 }
 
-func TestCreateAlreadyExistsRepo(t *testing.T) {
-  namespace := "spacedock"
-  name := "already-exists"
+func TestDeleteRepo(t *testing.T) {
+  err := DeleteRepo(namespace, name)
+  assert.Nil(t, err, "Delete error should be `nil`")
+}
 
-  repo := &models.Repo{
-    Namespace: namespace,
-    Name: name,
-  }
-
-  err := models.CreateRepo(repo)
-  assert.Nil(t, err, "Error should be `nil` when creating the user for the first time")
-  err = models.CreateRepo(repo)
-  assert.NotNil(t, err, "Error should not be `nil`")
-  assert.IsType(t, err, models.AlreadyExistsError{})
+func TestNoSuchRepo(t *testing.T) {
+  repo, _ := GetRepo(namespace, name)
+  assert.Nil(t, repo, "Repo shouldn't exists after being deleted")
 }
