@@ -28,9 +28,7 @@ func init() {
     if len(GoPath) > 0 {
       Dir = path.Join(
         GoPath,
-        "src",
-        "github.com",
-        "spacedock-io",
+        "src/github.com/spacedock-io",
         os.Args[0],
         "config",
       )
