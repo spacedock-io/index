@@ -8,8 +8,8 @@ import (
   "github.com/codegangsta/cli"
   "github.com/ricallinson/forgery"
   "github.com/southern/logger"
-  "github.com/yawnt/index.spacedock/config"
-  "github.com/yawnt/index.spacedock/couch"
+  "github.com/spacedock-io/index/config"
+  "github.com/spacedock-io/index/couch"
   "os"
 )
 
