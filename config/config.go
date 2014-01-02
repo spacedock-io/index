@@ -20,11 +20,7 @@ var (
   Dir string
 )
 
-
-// Load takes an environment, loads the JSON file associated with the
-// environment, and returns an instance of objx.Map for accessing the
-// properties.
-func Load(env string) (Global objx.Map) {
+func init() {
   _, file, _, ok := runtime.Caller(0)
   if ok {
     Dir = path.Dir(file)
@@ -40,7 +36,12 @@ func Load(env string) (Global objx.Map) {
       )
     }
   }
+}
 
+// Load takes an environment, loads the JSON file associated with the
+// environment, and returns an instance of objx.Map for accessing the
+// properties.
+func Load(env string) (Global objx.Map) {
   // Get current directory
   pwd, err := os.Getwd()
   if err != nil {
