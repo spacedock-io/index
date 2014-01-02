@@ -20,3 +20,4 @@ index.spacedock
 
 # Compiled go tests
 *.test
+.*.sw[op]
