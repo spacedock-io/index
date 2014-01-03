@@ -58,7 +58,7 @@ func main() {
     config.Logger.Debug = config.Global.Get("logger.debug").Bool(false)
     config.Logger.Exit = config.Global.Get("logger.exit").Bool(false)
 
-    couch.Global = couch.New()
+    couch.Global = couch.New(config.Global)
     Routes(server)
 
     config.Logger.Log("Index listening on port " + fmt.Sprint(port))
