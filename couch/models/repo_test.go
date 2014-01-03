@@ -18,7 +18,7 @@ var (
 
 func init() {
   config.Global = config.Load("test")
-  couch.Couch = couch.New()
+  couch.Global = couch.New()
 }
 
 func TestCreateRepo(t *testing.T) {

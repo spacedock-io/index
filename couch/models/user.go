@@ -18,7 +18,7 @@ func NewUser() *User {
 
 func GetUser(name string) (*User, error) {
   ret := &User{}
-  err := couch.Couch.Get(prefix + name, nil, ret)
+  err := couch.Global.Get(prefix + name, nil, ret)
 
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
@@ -31,7 +31,7 @@ func GetUser(name string) (*User, error) {
 }
 
 func CreateUser(user *User) error {
-  _, err := couch.Couch.Put(prefix + user.Username, user)
+  _, err := couch.Global.Put(prefix + user.Username, user)
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
     if ok && dberr.StatusCode == 409 {
@@ -48,6 +48,6 @@ func DeleteUser(name string) error {
     return err
   }
 
-  _, err = couch.Couch.Delete(prefix + user.Username, user.Rev)
+  _, err = couch.Global.Delete(prefix + user.Username, user.Rev)
   return err
 }

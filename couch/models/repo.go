@@ -22,7 +22,7 @@ func NewRepo() *Repo {
 
 func GetRepo(namespace string, repo string) (*Repo, error) {
   ret := &Repo{}
-  err := couch.Couch.Get(repoPrefix + namespace + repoSeparator + repo, nil, ret)
+  err := couch.Global.Get(repoPrefix + namespace + repoSeparator + repo, nil, ret)
 
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
@@ -35,7 +35,7 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
 }
 
 func CreateRepo(repo *Repo) error {
-  _, err := couch.Couch.Put(repoPrefix + repo.Namespace + repoSeparator + repo.Name, repo)
+  _, err := couch.Global.Put(repoPrefix + repo.Namespace + repoSeparator + repo.Name, repo)
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
     if ok && dberr.StatusCode == 409 {
@@ -52,6 +52,6 @@ func DeleteRepo(namespace string, name string) error {
     return err
   }
 
-  _, err = couch.Couch.Delete(repo.Id, repo.Rev)
+  _, err = couch.Global.Delete(repo.Id, repo.Rev)
   return err
 }

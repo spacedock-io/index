@@ -6,7 +6,7 @@ import (
   "github.com/spacedock-io/index/config"
 )
 
-var Couch *couchdb.Database
+var Global *couchdb.Database
 
 func New() *couchdb.Database {
   var err error
@@ -23,11 +23,11 @@ func New() *couchdb.Database {
   url := fmt.Sprintf("%s://%s:%d/", proto, host, port)
 
   server := couchdb.NewServer(url, nil)
-  Couch = server.Db(db)
+  Global = server.Db(db)
 
   if err != nil {
     config.Logger.Log("c", err.Error())
   }
 
-  return Couch
+  return Global
 }
