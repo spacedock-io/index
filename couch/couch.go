@@ -4,30 +4,31 @@ import (
   "fmt"
   "github.com/fjl/go-couchdb"
   "github.com/spacedock-io/index/config"
+  "github.com/stretchr/objx"
 )
 
 var Global *couchdb.Database
 
-func New() *couchdb.Database {
+func New(c objx.Map) *couchdb.Database {
   var err error
 
-  proto, host, port, db := config.Global.Get("couch.protocol").Str("http"),
-    config.Global.Get("couch.host").Str("localhost"),
-    int(config.Global.Get("couch.port").Float64(5984)),
-    config.Global.Get("couch.database").Str()
+  proto, host, port, name := c.Get("couch.protocol").Str("http"),
+    c.Get("couch.host").Str("localhost"),
+    int(c.Get("couch.port").Float64(5984)),
+    c.Get("couch.database").Str()
 
-  if len(db) == 0 {
+  if len(name) == 0 {
     config.Logger.Log("c", "There was no database specified in the config.")
   }
 
   url := fmt.Sprintf("%s://%s:%d/", proto, host, port)
 
   server := couchdb.NewServer(url, nil)
-  Global = server.Db(db)
+  db := server.Db(name)
 
   if err != nil {
     config.Logger.Log("c", err.Error())
   }
 
-  return Global
+  return db
 }

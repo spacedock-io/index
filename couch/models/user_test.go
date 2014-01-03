@@ -3,8 +3,6 @@ package models
 import (
   "testing"
   "github.com/stretchr/testify/assert"
-  "github.com/spacedock-io/index/config"
-  "github.com/spacedock-io/index/couch"
 )
 
 var (
@@ -13,11 +11,6 @@ var (
     Username: username,
   }
 )
-
-func init() {
-  config.Global = config.Load("test")
-  couch.Global = couch.New()
-}
 
 func TestUserCreate(t *testing.T) {
   err := CreateUser(user)
