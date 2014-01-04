@@ -15,12 +15,12 @@ var (
 )
 
 func TestCreateRepo(t *testing.T) {
-  err := CreateRepo(newRepo)
+  err := newRepo.Create()
   assert.Nil(t, err, "Error should be `nil`")
 }
 
 func TestRepoAlreadyExists(t *testing.T) {
-  err := CreateRepo(newRepo)
+  err := newRepo.Create()
   assert.NotNil(t, err, "Error should not be `nil`")
   assert.IsType(t, err, AlreadyExistsError{})
 }
@@ -34,7 +34,9 @@ func TestGetRepo(t *testing.T) {
 }
 
 func TestDeleteRepo(t *testing.T) {
-  err := DeleteRepo(namespace, name)
+  repo, err := GetRepo(namespace, name)
+  assert.Nil(t, err, "Get error should be `nil`")
+  err = repo.Delete()
   assert.Nil(t, err, "Delete error should be `nil`")
 }
 
