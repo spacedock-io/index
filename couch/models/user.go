@@ -39,8 +39,8 @@ func GetUser(name string) (*User, error) {
   return ret, err
 }
 
-func CreateUser(user *User, password string) error {
-  ph := pbkdf2.HashPassword(password)
+func (user *User) Create() error {
+  ph := pbkdf2.HashPassword(user.Pass)
 
   user.Salt = string(ph.Salt)
   user.Pass = string(ph.Hash)
@@ -56,20 +56,20 @@ func CreateUser(user *User, password string) error {
   return err
 }
 
-func DeleteUser(name string) error {
-  user, err := GetUser(name)
-  if err != nil {
-    return err
-  }
-
-  _, err = couch.Global.Delete(prefix + user.Username, user.Rev)
+func (user *User) Delete() error {
+  _, err := couch.Global.Delete(prefix + user.Username, user.Rev)
   return err
 }
 
-func AuthUser(name string, pass string) bool {
-  ret, err := GetUser(name)
-  if err != nil { return false }
-  ph := &pbkdf2.PasswordHash{[]byte(ret.Pass), []byte(ret.Salt)}
+func (user *User) MatchPassword(pass string) bool {
+  ph := &pbkdf2.PasswordHash{[]byte(user.Pass), []byte(user.Salt)}
   return pbkdf2.MatchPassword(pass, ph)
 }
 
+func AuthUser(user string, pass string) bool {
+  ret, err := GetUser(user)
+  if (err != nil) {
+    return false;
+  }
+  return ret.MatchPassword(pass)
+}

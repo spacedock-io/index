@@ -31,8 +31,9 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
 
     u.Username = username
     u.Email = email
+    u.Pass = password
 
-    e := models.CreateUser(u, password)
+    e := u.Create()
     if (e != nil) {
       // @TODO: Don't just send the whole error here
       res.Send(e, 400)
