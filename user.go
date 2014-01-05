@@ -6,7 +6,16 @@ import (
 )
 
 func CreateUser(req *f.Request, res *f.Response, next func()) {
-  username, email, password := req.Body["username"], req.Body["email"], req.Body["password"]
+  var username, email, password string
+
+  if len(req.Body) > 0 {
+    username, email, password = req.Body["username"], req.Body["email"],
+      req.Body["password"]
+  } else if len(req.Request.Map) > 0 {
+    username, _ = req.Request.Map["username"].(string)
+    password, _ = req.Request.Map["password"].(string)
+    email, _ = req.Request.Map["email"].(string)
+  }
 
   // @TODO: Validate email format
 
