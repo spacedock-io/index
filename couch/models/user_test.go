@@ -17,7 +17,7 @@ func TestUserCreate(t *testing.T) {
   assert.Nil(t, err, "Error should be `nil`")
 }
 
-func TestAlreadyExists(t *testing.T) {
+func TestUserAlreadyExists(t *testing.T) {
   err := CreateUser(user)
   assert.NotNil(t, err, "Error should not be `nil`")
   assert.IsType(t, err, AlreadyExistsError{})
