@@ -19,7 +19,14 @@ func UnpackAuth(raw []string) (creds []string, err error) {
 }
 
 func CheckAuth(req *f.Request, res *f.Response, next func()) {
-  creds, err := UnpackAuth(req.Header["Authorization"])
+  auth := req.Header["Authorization"]
+
+  if len(auth) == 0 {
+    res.Send("No authorization provided.", 401)
+    return
+  }
+
+  creds, err := UnpackAuth(auth)
   if err != nil {
     res.Send("Unauthorized", 401)
     return
