@@ -12,7 +12,7 @@ var (
   user = &User{
     Username: username,
     Email: email,
-    Pass: pass,
+    Pass: []byte(pass),
   }
 )
 

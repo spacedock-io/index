@@ -12,8 +12,8 @@ var prefix string = "user:"
 type User struct {
   Username string `json:"username"`
   Email string `json:"email"`
-  Salt string `json:"salt"`
-  Pass string `json:"pass"`
+  Salt []byte `json:"salt"`
+  Pass []byte `json:"pass"`
   Rev string `json:"_rev,omitempty"`
 }
 
@@ -40,10 +40,9 @@ func GetUser(name string) (*User, error) {
 }
 
 func (user *User) Create() error {
-  ph := pbkdf2.HashPassword(user.Pass)
-
-  user.Salt = string(ph.Salt)
-  user.Pass = string(ph.Hash)
+  ph := pbkdf2.HashPassword(string(user.Pass))
+  user.Salt = ph.Salt
+  user.Pass = ph.Hash
 
   _, err := couch.Global.Put(prefix + user.Username, user)
   if err != nil {
@@ -62,7 +61,8 @@ func (user *User) Delete() error {
 }
 
 func (user *User) MatchPassword(pass string) bool {
-  return pbkdf2.MatchPassword(pass, &pbkdf2.PasswordHash(user.Pass, user.Salt))
+  ph := &pbkdf2.PasswordHash{ Hash: user.Pass, Salt: user.Salt}
+  return pbkdf2.MatchPassword(pass, ph)
 }
 
 func AuthUser(user string, pass string) bool {
