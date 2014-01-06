@@ -26,9 +26,7 @@ func CheckAuth(req *f.Request, res *f.Response, next func()) {
   }
 
   result := models.AuthUser(creds[0], creds[1])
-  if result == true {
-    next()
-  } else {
+  if result != true {
     res.Send("Unauthorized", 401)
   }
 }
