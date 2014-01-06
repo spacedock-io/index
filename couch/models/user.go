@@ -1,19 +1,37 @@
 package models
 
 import (
+  "encoding/hex"
+  "encoding/json"
   "crypto/sha256"
   "github.com/spacedock-io/index/couch"
   "github.com/fjl/go-couchdb"
   "github.com/gokyle/pbkdf2"
 )
 
+type HexString []byte
+
+func (h *HexString) MarshalJSON() ([]byte, error) {
+  s := hex.EncodeToString(*h)
+  bytes, err := json.Marshal(s)
+  return bytes, err
+}
+
+func (h *HexString) UnmarshalJSON(data []byte) error {
+  var x string
+  json.Unmarshal(data, &x)
+  s, err := hex.DecodeString(x)
+  *h = HexString(s)
+  return err
+}
+
 var prefix string = "user:"
 
 type User struct {
   Username string `json:"username"`
   Email string `json:"email"`
-  Salt []byte `json:"salt"`
-  Pass []byte `json:"pass"`
+  Salt HexString `json:"salt"`
+  Pass HexString `json:"pass"`
   Rev string `json:"_rev,omitempty"`
 }
 
