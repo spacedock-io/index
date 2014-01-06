@@ -62,8 +62,7 @@ func (user *User) Delete() error {
 }
 
 func (user *User) MatchPassword(pass string) bool {
-  ph := pbkdf2.HashPasswordWithSalt(pass, []byte(user.Salt))
-  return pbkdf2.MatchPassword(pass, ph)
+  return pbkdf2.MatchPassword(pass, &pbkdf2.PasswordHash(user.Pass, user.Salt))
 }
 
 func AuthUser(user string, pass string) bool {
