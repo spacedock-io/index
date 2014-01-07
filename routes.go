@@ -20,7 +20,7 @@ func Routes(server *f.Server) {
    */
   server.Get("/v1/users", common.CheckAuth, Login)
   server.Post("/v1/users", CreateUser)
-  server.Put("/v1/users", common.CheckAuth, UpdateUser)
+  server.Put("/v1/users/:username", common.CheckAuth, UpdateUser)
 
   /*
     User repository routes
