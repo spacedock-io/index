@@ -29,7 +29,7 @@ var prefix string = "user:"
 
 type User struct {
   Username string `json:"username"`
-  Email string `json:"email"`
+  Email []string `json:"email"`
   Salt HexString `json:"salt"`
   Pass HexString `json:"pass"`
   Rev string `json:"_rev,omitempty"`
@@ -57,25 +57,31 @@ func GetUser(name string) (*User, error) {
   return ret, err
 }
 
-func (user *User) Create() error {
-  ph := pbkdf2.HashPassword(string(user.Pass))
-  user.Salt = ph.Salt
-  user.Pass = ph.Hash
+func (user *User) Create(password string) error {
+  user.SetPassword(password)
+  return user.Save(false)
+}
 
+func (user *User) Save(update bool) error {
   _, err := couch.Global.Put(prefix + user.Username, user)
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
-    if ok && dberr.StatusCode == 409 {
+    if ok && !update && dberr.StatusCode == 409 {
       err = AlreadyExistsError{}
     }
   }
-
   return err
 }
 
 func (user *User) Delete() error {
   _, err := couch.Global.Delete(prefix + user.Username, user.Rev)
   return err
+}
+
+func (user *User) SetPassword(pass string) {
+  ph := pbkdf2.HashPassword(pass)
+  user.Salt = ph.Salt
+  user.Pass = ph.Hash
 }
 
 func (user *User) MatchPassword(pass string) bool {
@@ -85,7 +91,7 @@ func (user *User) MatchPassword(pass string) bool {
 
 func AuthUser(user string, pass string) bool {
   ret, err := GetUser(user)
-  if (err != nil) {
+  if err != nil || ret == nil {
     return false;
   }
   return ret.MatchPassword(pass)
