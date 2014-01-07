@@ -30,10 +30,9 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
     u := models.NewUser()
 
     u.Username = username
-    u.Email = email
-    u.Pass = password
+    u.Email = append(u.Email, email)
 
-    e := u.Create()
+    e := u.Create(password)
     if (e != nil) {
       // @TODO: Don't just send the whole error here
       res.Send(e, 400)
@@ -52,5 +51,38 @@ func Login(req *f.Request, res *f.Response, next func()) {
 }
 
 func UpdateUser(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  var username, email, newPass string
+
+  username = req.Params["username"]
+
+  if len(req.Body) > 0 {
+    email = req.Body["email"]
+    newPass = req.Body["password"]
+  } else if len(req.Map) > 0 {
+    email = req.Map["email"].(string)
+    newPass = req.Map["password"].(string)
+  }
+
+  u, e := models.GetUser(username)
+  if e != nil {
+    res.Send(e, 400)
+    return
+  }
+
+  if len(newPass) > 5 {
+    u.SetPassword(newPass)
+  } else if len(newPass) > 0 {
+    res.Send("Password too short", 400)
+    return
+  }
+
+  if len(email) > 0 { u.Email = append(u.Email, email) }
+
+  e = u.Save(true)
+  if e != nil {
+    res.Send(e, 400)
+    return
+  }
+
+  res.Send("User Updated", 204)
 }
