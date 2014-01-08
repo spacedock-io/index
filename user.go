@@ -65,7 +65,7 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
 
   u, e := models.GetUser(username)
   if e != nil {
-    res.Send(e, 400)
+    res.Send(e.Error(), 400)
     return
   }
 
@@ -80,7 +80,7 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
 
   e = u.Save(true)
   if e != nil {
-    res.Send(e, 400)
+    res.Send(e.Error(), 400)
     return
   }
 
