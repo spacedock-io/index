@@ -35,7 +35,7 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
     e := u.Create(password)
     if (e != nil) {
       // @TODO: Don't just send the whole error here
-      res.Send(e, 400)
+      res.Send(e.Error(), 400)
     }
     res.Send("User created successfully", 200)
     // later on, send an async email
