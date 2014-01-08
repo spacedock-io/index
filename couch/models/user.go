@@ -57,6 +57,10 @@ func GetUser(name string) (*User, error) {
   return ret, err
 }
 
+func (user *User) Get() error {
+  return couch.Global.Get(prefix + user.Username, nil, user)
+}
+
 func (user *User) Create(password string) error {
   user.SetPassword(password)
   return user.Save(false)
@@ -66,8 +70,16 @@ func (user *User) Save(update bool) error {
   _, err := couch.Global.Put(prefix + user.Username, user)
   if err != nil {
     dberr, ok := err.(couchdb.DatabaseError)
-    if ok && !update && dberr.StatusCode == 409 {
-      err = AlreadyExistsError{}
+    if ok && dberr.StatusCode == 409 {
+      if update {
+        err = user.Get()
+        if err != nil {
+          return err
+        }
+        return ConflictError{}
+      } else {
+        return AlreadyExistsError{}
+      }
     }
   }
   return err
@@ -82,6 +94,21 @@ func (user *User) SetPassword(pass string) {
   ph := pbkdf2.HashPassword(pass)
   user.Salt = ph.Salt
   user.Pass = ph.Hash
+}
+
+func (user *User) AddEmail(email string) error {
+  for _, item := range user.Email {
+    if item == email {
+      return nil
+    }
+  }
+  user.Email = append(user.Email, email)
+
+  err := user.Save(true)
+  if _, ok := err.(ConflictError); ok {
+    return user.AddEmail(email)
+  }
+  return err
 }
 
 func (user *User) MatchPassword(pass string) bool {
