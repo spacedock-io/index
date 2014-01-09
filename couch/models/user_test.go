@@ -8,30 +8,38 @@ import (
 var (
   username = "foo"
   email = "foo@bar.com"
+  newEmail = "bar@foo.com"
   pass = "4321"
   user = &User{
     Username: username,
-    Email: email,
+    Email: []string{email},
     Pass: HexString(pass),
   }
 )
 
 func TestUserCreate(t *testing.T) {
-  err := user.Create()
+  err := user.Create(pass)
   assert.Nil(t, err, "Error should be `nil`")
 }
 
 func TestUserAlreadyExists(t *testing.T) {
-  err := user.Create()
+  err := user.Create(pass)
   assert.NotNil(t, err, "Error should not be `nil`")
   assert.IsType(t, AlreadyExistsError{}, err)
 }
 
+func TestUserAddEmail(t *testing.T) {
+  err := user.AddEmail(newEmail)
+  assert.Nil(t, err, "Add email error should be `nil`")
+}
+
 func TestUserGet(t *testing.T) {
-  getUser, getError := GetUser(username)
-  assert.Nil(t, getError, "Get error should be `nil`")
-  assert.True(t, getUser.MatchPassword(pass), "Password should match")
-  assert.Equal(t, getUser.Username, username)
+  user, err := GetUser(username)
+  assert.Nil(t, err, "Get error should be `nil`")
+  assert.True(t, user.MatchPassword(pass), "Password should match")
+  assert.Equal(t, user.Username, username)
+  assert.Equal(t, user.Email[0], email)
+  assert.Equal(t, user.Email[1], newEmail)
 }
 
 func TestUserDelete(t *testing.T) {
