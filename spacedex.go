@@ -35,9 +35,9 @@ func main() {
   app.Flags = []cli.Flag {
     // No default value here, so that our <env>.config.json file will override
     // it.
-    cli.StringFlag{"port, p", "", "Port to listen on", true},
-    cli.StringFlag{"env, e", "dev", "Default environment", false},
-    cli.StringFlag{"config, c", "", "Configuration directory", true},
+    cli.StringFlag{"port, p", "", "Port to listen on"},
+    cli.StringFlag{"env, e", "dev", "Default environment"},
+    cli.StringFlag{"config, c", "", "Configuration directory"},
   }
 
   app.Action = func (c *cli.Context) {
