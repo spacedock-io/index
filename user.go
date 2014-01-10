@@ -12,9 +12,10 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
     username, email, password = req.Body["username"], req.Body["email"],
       req.Body["password"]
   } else if len(req.Request.Map) > 0 {
-    username, _ = req.Map["username"].(string)
-    password, _ = req.Map["password"].(string)
-    email, _ = req.Map["email"].(string)
+    json := req.Map["json"].(map[string]string)
+    username, _ = json["username"]
+    password, _ = json["password"]
+    email, _ = json["email"]
   }
 
   // @TODO: Validate email format
