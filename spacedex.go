@@ -23,7 +23,6 @@ func main() {
   server := f.CreateServer()
   server.Use(middleware.BodyParser)
   server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
-    res.SetHeader("X-Docker-Registry-Standalone", "False")
     res.SetHeader("X-Docker-Registry-Version", "0.7.4")
     next()
   })

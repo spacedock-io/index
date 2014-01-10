@@ -10,6 +10,7 @@ func Routes(server *f.Server) {
     Stuff needed for private index
    */
   server.Get("/v1/_ping", func(req *f.Request, res *f.Response, next func()) {
+    res.SetHeader("X-Docker-Registry-Standalone", "False")
     res.Send("true")
   })
 
