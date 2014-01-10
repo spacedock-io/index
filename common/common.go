@@ -9,8 +9,8 @@ import (
   "github.com/spacedock-io/index/couch/models"
 )
 
-func UnpackAuth(raw []string) (creds []string, err error) {
-  auth := strings.Split(raw[0], " ")
+func UnpackAuth(raw string) (creds []string, err error) {
+  auth := strings.Split(raw, " ")
   decoded, err := base64.StdEncoding.DecodeString(auth[1])
   if err != nil { return nil, err }
 
@@ -19,7 +19,7 @@ func UnpackAuth(raw []string) (creds []string, err error) {
 }
 
 func CheckAuth(req *f.Request, res *f.Response, next func()) {
-  auth := req.Header["Authorization"]
+  auth := req.Get("authorization")
 
   if len(auth) == 0 {
     res.Send("No authorization provided.", 401)
