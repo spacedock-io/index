@@ -7,6 +7,13 @@ import (
 
 func Routes(server *f.Server) {
   /*
+    Stuff needed for private index
+   */
+  server.Get("/v1/_ping", func(req *f.Request, res *f.Response, next func()) {
+    res.Send("true")
+  })
+
+  /*
     Library repository routes
    */
   server.Put("/v1/repositories/:repo/auth/", LibraryAuth)

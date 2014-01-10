@@ -7,6 +7,7 @@ import (
   "fmt"
   "github.com/codegangsta/cli"
   "github.com/ricallinson/forgery"
+  "github.com/ricallinson/stackr"
   "github.com/southern/logger"
   "github.com/southern/middleware"
   "github.com/spacedock-io/index/config"
@@ -21,6 +22,11 @@ func main() {
   // Initialize new Forgery server
   server := f.CreateServer()
   server.Use(middleware.BodyParser)
+  server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
+    res.SetHeader("X-Docker-Registry-Standalone", "False")
+    res.SetHeader("X-Docker-Registry-Version", "0.7.4")
+    next()
+  })
 
   app.Name = "spacedex"
   app.Author = "Spacedock"
