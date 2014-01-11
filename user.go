@@ -2,7 +2,8 @@ package main
 
 import (
   "github.com/ricallinson/forgery"
-  "github.com/spacedock-io/index/couch/models"
+  "github.com/spacedock-io/index/models"
+  "github.com/spacedock-io/registry/db"
 )
 
 func CreateUser(req *f.Request, res *f.Response, next func()) {
@@ -28,15 +29,15 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
     res.Send("Username too long", 400)
   } else {
     // put user in couch, send confirm email
-    u := models.NewUser()
+    u := models.User{}
 
     u.Username = username
-    u.Email = append(u.Email, email)
+    u.Emails = append(u.Emails, email)
 
-    e := u.Create(password)
-    if (e != nil) {
+    q := u.Create(password)
+    if (q.Error != nil) {
       // @TODO: Don't just send the whole error here
-      res.Send(e.Error(), 400)
+      res.Send(q.Error(), 400)
     }
     res.Send("User created successfully", 201)
     // later on, send an async email
@@ -53,6 +54,7 @@ func Login(req *f.Request, res *f.Response, next func()) {
 
 func UpdateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, newPass string
+  var u models.User
 
   username = req.Params["username"]
 
@@ -64,9 +66,9 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     newPass = req.Map["password"].(string)
   }
 
-  u, e := models.GetUser(username)
-  if e != nil {
-    res.Send(e.Error(), 400)
+  query := db.DB.Where("Username = ?", username).Find(&u)
+  if query.Error != nil {
+    res.Send(query.Error, 400)
     return
   }
 
@@ -77,11 +79,11 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  if len(email) > 0 { u.Email = append(u.Email, email) }
+  if len(email) > 0 { u.Emails = append(u.Emails, email) }
 
-  e = u.Save(true)
-  if e != nil {
-    res.Send(e.Error(), 400)
+  query = db.DB.Save(&u)
+  if query.Error != nil {
+    res.Send(query.Error, 400)
     return
   }
 
