@@ -11,7 +11,8 @@ import (
   "github.com/southern/logger"
   "github.com/southern/middleware"
   "github.com/spacedock-io/index/config"
-  "github.com/spacedock-io/index/couch"
+  "github.com/spacedock-io/registry/db"
+  _ "github.com/lib/pq"
   "os"
 )
 
@@ -65,7 +66,7 @@ func main() {
     config.Logger.Debug = config.Global.Get("logger.debug").Bool(false)
     config.Logger.Exit = config.Global.Get("logger.exit").Bool(false)
 
-    couch.Global = couch.New(config.Global)
+    db.New(config.Global)
     Routes(server)
 
     config.Logger.Log("Index listening on port " + fmt.Sprint(port))
