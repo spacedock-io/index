@@ -13,7 +13,7 @@ func init() {
 type Email struct {
   Id        int64
   Email     string
-  /* UserId    int64 */
+  UserId    int64
 }
 
 type User struct {
@@ -24,19 +24,35 @@ type User struct {
   Salt      []byte
 }
 
-type LolErr struct{}
+type UserErr struct{}
+type NotFoundErr struct{}
 
-func (err LolErr) Error() string {
-  return "Lol shit be fucked up dawg"
+func (err UserErr) Error() string {
+  return "There was an error saving to users"
 }
 
+func (err NotFoundErr) Error() string {
+  return "User not found"
+}
 
+func GetUser(username string) (*User, error) {
+  u := &User{}
+  q := db.DB.Where("Username = ?", username).Find(u)
+  if q.Error != nil {
+    if q.RecordNotFound() {
+      return nil, NotFoundErr{}
+    } else {
+      return nil, q.Error
+    }
+  }
+  return u, nil
+}
 
 func (user *User) Create(password string) error {
   user.SetPassword(password)
-  q := db.DB.Save(&user)
+  q := db.DB.Save(user)
   if q.Error != nil {
-    return LolErr{}
+    return UserErr{}
   }
   return nil
 }
@@ -52,12 +68,10 @@ func (user *User) MatchPassword(pass string) bool {
   return pbkdf2.MatchPassword(pass, ph)
 }
 
+// @TODO: Make this not return a bool
 func AuthUser(user string, pass string) bool {
-  var u User
-  query := db.DB.Where("Username = ?", user).Find(&u)
-  if query.Error != nil {
-    return false;
-  }
+  u, err := GetUser(user)
+  if err != nil { return false }
   return u.MatchPassword(pass)
 }
 
