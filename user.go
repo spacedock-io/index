@@ -9,14 +9,15 @@ import (
 func CreateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, password string
 
+  json := req.Map["json"].(map[string]interface{})
+
   if len(req.Body) > 0 {
     username, email, password = req.Body["username"], req.Body["email"],
       req.Body["password"]
-  } else if len(req.Request.Map) > 0 {
-    json := req.Map["json"].(map[string]string)
-    username, _ = json["username"]
-    password, _ = json["password"]
-    email, _ = json["email"]
+  } else if len(json) > 0 {
+    username, _ = json["username"].(string)
+    password, _ = json["password"].(string)
+    email, _ = json["email"].(string)
   }
 
   // @TODO: Validate email format
@@ -28,7 +29,6 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
   } else if len(username) > 30 {
     res.Send("Username too long", 400)
   } else {
-
     // put user in couch, send confirm email
     u := models.User{}
 
