@@ -24,16 +24,6 @@ type User struct {
   Salt      []byte
 }
 
-type UserErr struct{}
-type NotFoundErr struct{}
-
-func (err UserErr) Error() string {
-  return "There was an error saving to users"
-}
-
-func (err NotFoundErr) Error() string {
-  return "User not found"
-}
 
 func GetUser(username string) (*User, error) {
   u := &User{}
@@ -52,7 +42,7 @@ func (user *User) Create(password string) error {
   user.SetPassword(password)
   q := db.DB.Save(user)
   if q.Error != nil {
-    return UserErr{}
+    return SaveErr{}
   }
   return nil
 }
