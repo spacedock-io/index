@@ -1,8 +1,7 @@
 {
   "port": 8080,
-  "couch": {
-    "host": "localhost",
-    "port": 5984,
-    "database": "spacedex"
+  "gorm": {
+    "driver": "postgres",
+    "source": "user=spacedock dbname=spacedock-test sslmode=disable"
   }
 }
