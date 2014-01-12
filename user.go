@@ -28,18 +28,19 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
   } else if len(username) > 30 {
     res.Send("Username too long", 400)
   } else {
+
     // put user in couch, send confirm email
     u := models.User{}
 
     u.Username = username
     u.Emails = append(u.Emails, models.Email{Email: email})
 
-    q := u.Create(password)
-    if (q.Error != nil) {
+    err := u.Create(password)
+    if (err != nil) {
       // @TODO: Don't just send the whole error here
-      res.Send(q.Error(), 400)
+      res.Send(err.Error(), 400)
     }
-    res.Send("User created successfully", 201)
+    res.Send(201)
     // later on, send an async email
     //go ConfirmEmail()
   }
@@ -54,7 +55,6 @@ func Login(req *f.Request, res *f.Response, next func()) {
 
 func UpdateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, newPass string
-  var u models.User
 
   username = req.Params["username"]
 
@@ -66,10 +66,9 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     newPass = req.Map["password"].(string)
   }
 
-  query := db.DB.Where("Username = ?", username).Find(&u)
-  if query.Error != nil {
-    res.Send(query.Error, 400)
-    return
+  u, err := models.GetUser(username)
+  if err != nil {
+    res.Send(err.Error(), 400)
   }
 
   if len(newPass) > 5 {
@@ -81,9 +80,10 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
 
   if len(email) > 0 { u.Emails = append(u.Emails, models.Email{Email: email}) }
 
-  query = db.DB.Save(&u)
-  if query.Error != nil {
-    res.Send(query.Error, 400)
+  q := db.DB.Save(u)
+  if q.Error != nil {
+    // gorm errors are complicated, let's not take them apart for now
+    res.Send("Unable to save", 500)
     return
   }
 
