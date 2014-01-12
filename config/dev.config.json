@@ -2,6 +2,6 @@
   "port": 8080,
   "gorm": {
     "driver": "postgres",
-    "source": "user=yawnt dbname=test sslmode=disable"
+    "source": "user=spacedock dbname=spacedock-test sslmode=disable"
   }
 }
