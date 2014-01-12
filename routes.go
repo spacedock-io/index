@@ -18,7 +18,7 @@ func Routes(server *f.Server) {
     Library repository routes
    */
   server.Put("/v1/repositories/:repo/auth/", LibraryAuth)
-  server.Put("/v1/repositories/:repo/", CreateLibrary)
+  server.Put("/v1/repositories/:repo/", common.CheckAuth, CreateLibrary)
   server.Delete("/v1/repositories/:repo/", DeleteLibrary)
   server.Put("/v1/repositories/:repo/images/", UpdateLibraryImage)
   server.Get("/v1/repositories/:repo/images/", GetLibraryImage)
@@ -34,10 +34,10 @@ func Routes(server *f.Server) {
     User repository routes
    */
   server.Put("/v1/repositories/:namespace/:repo/auth/", RepoAuth)
-  server.Put("/v1/repositories/:namespace/:repo/", CreateRepo)
-  server.Delete("/v1/repositories/:namespace/:repo/", DeleteRepo)
-  server.Put("/v1/repositories/:namespace/:repo/images/", UpdateUserImage)
-  server.Get("/v1/repositories/:namespace/:repo/images/", GetUserImage)
+  server.Put("/v1/repositories/:namespace/:repo/", common.CheckAuth, CreateRepo)
+  server.Delete("/v1/repositories/:namespace/:repo/", common.CheckAuth, DeleteRepo)
+  server.Put("/v1/repositories/:namespace/:repo/images/", common.CheckAuth, UpdateUserImage)
+  server.Get("/v1/repositories/:namespace/:repo/images/", common.CheckAuth, GetUserImage)
 
   // Search route
   server.Get("/v1/search/", Search)
