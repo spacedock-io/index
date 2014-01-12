@@ -8,13 +8,18 @@ import (
 
 func init() {
   pbkdf2.HashFunc = sha256.New
-  db.DB.CreateTable(&User{})
+}
+
+type Email struct {
+  Id        int64
+  Email     string
+  /* UserId    int64 */
 }
 
 type User struct {
   Id        int64
   Username  string
-  Emails    []string
+  Emails    []Email
   Hash      []byte
   Salt      []byte
 }

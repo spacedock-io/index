@@ -12,6 +12,7 @@ import (
   "github.com/southern/middleware"
   "github.com/spacedock-io/index/config"
   "github.com/spacedock-io/registry/db"
+  "github.com/spacedock-io/index/models"
   _ "github.com/lib/pq"
   "os"
 )
@@ -36,9 +37,9 @@ func main() {
   app.Flags = []cli.Flag {
     // No default value here, so that our <env>.config.json file will override
     // it.
-    cli.StringFlag{"port, p", "", "Port to listen on", true},
-    cli.StringFlag{"env, e", "dev", "Default environment", false},
-    cli.StringFlag{"config, c", "", "Configuration directory", true},
+    cli.StringFlag{"port, p", "", "Port to listen on"},
+    cli.StringFlag{"env, e", "dev", "Default environment"},
+    cli.StringFlag{"config, c", "", "Configuration directory"},
   }
 
   app.Action = func (c *cli.Context) {
@@ -66,7 +67,10 @@ func main() {
     config.Logger.Debug = config.Global.Get("logger.debug").Bool(false)
     config.Logger.Exit = config.Global.Get("logger.exit").Bool(false)
 
-    db.New(config.Global)
+    db := db.New(config.Global)
+    db.CreateTable(&models.User{})
+    db.CreateTable(&models.Email{})
+
     Routes(server)
 
     config.Logger.Log("Index listening on port " + fmt.Sprint(port))

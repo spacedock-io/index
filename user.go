@@ -32,7 +32,7 @@ func CreateUser(req *f.Request, res *f.Response, next func()) {
     u := models.User{}
 
     u.Username = username
-    u.Emails = append(u.Emails, email)
+    u.Emails = append(u.Emails, models.Email{Email: email})
 
     q := u.Create(password)
     if (q.Error != nil) {
@@ -79,7 +79,7 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  if len(email) > 0 { u.Emails = append(u.Emails, email) }
+  if len(email) > 0 { u.Emails = append(u.Emails, models.Email{Email: email}) }
 
   query = db.DB.Save(&u)
   if query.Error != nil {
