@@ -8,6 +8,7 @@ import (
 
 func init() {
   pbkdf2.HashFunc = sha256.New
+  db.DB.CreateTable(&User{})
 }
 
 type User struct {
@@ -28,7 +29,7 @@ func (err LolErr) Error() string {
 
 func (user *User) Create(password string) error {
   user.SetPassword(password)
-  q := db.DB.Save(user)
+  q := db.DB.Save(&user)
   if q.Error != nil {
     return LolErr{}
   }

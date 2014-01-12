@@ -6,7 +6,7 @@ import (
   "encoding/base64"
   "strings"
   "github.com/ricallinson/forgery"
-  "github.com/spacedock-io/index/couch/models"
+  "github.com/spacedock-io/index/models"
 )
 
 func UnpackAuth(raw string) (creds []string, err error) {
