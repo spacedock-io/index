@@ -39,3 +39,13 @@ func (repo *Repo) Delete() error {
   }
   return nil
 }
+
+func (repo *Repo) HasToken(token string) bool {
+  for _, v := range repo.Tokens {
+    if v.String() == token {
+      return true
+    }
+  }
+
+  return false
+}
