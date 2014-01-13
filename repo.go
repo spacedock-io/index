@@ -16,7 +16,7 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   r.RegistryId = "221"
 
   // @TODO: make sure this access level is right
-  t, ok := models.CreateToken("write", req.Map["_uid"].(int64))
+  t, ok := models.CreateToken("write", req.Map["_uid"].(int64), fullname)
   if !ok { res.Send("Token error", 400) }
 
   r.Tokens = append(r.Tokens, t)
@@ -26,10 +26,8 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
     res.Send(err.Error(), 400)
   }
 
-  tokenString := "signature=" + t.Signature + ",repository=" + fullname + ",access=" + t.Access
-
-  res.Set("X-Docker-Token", tokenString)
-  res.Set("WWW-Authenticate", "Token " + tokenString)
+  res.Set("X-Docker-Token", t.String())
+  res.Set("WWW-Authenticate", "Token " + t.String())
   res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
 
   res.Send("Created", 200)
