@@ -32,8 +32,9 @@ func CheckAuth(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  result := models.AuthUser(creds[0], creds[1])
-  if result != true {
+  u, ok := models.AuthUser(creds[0], creds[1])
+  if !ok {
     res.Send("Unauthorized", 401)
   }
+  req.Map["_uid"] = u.Id
 }
