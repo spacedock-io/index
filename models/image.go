@@ -8,7 +8,7 @@ type Image struct {
   Json []byte
   Checksum string
   Size int64
-  Ancestry []string
+//  Ancestry []string
   RepoId int64
 }
 

@@ -72,6 +72,7 @@ func main() {
     db.AutoMigrate(&models.Email{})
     db.AutoMigrate(&models.Repo{})
     db.AutoMigrate(&models.Token{})
+    db.AutoMigrate(&models.Image{})
 
     Routes(server)
 
