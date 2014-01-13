@@ -68,10 +68,10 @@ func main() {
     config.Logger.Exit = config.Global.Get("logger.exit").Bool(false)
 
     db := db.New(config.Global)
-    db.CreateTable(&models.User{})
-    db.CreateTable(&models.Email{})
-    db.CreateTable(&models.Repo{})
-    db.CreateTable(&models.Token{})
+    db.AutoMigrate(&models.User{})
+    db.AutoMigrate(&models.Email{})
+    db.AutoMigrate(&models.Repo{})
+    db.AutoMigrate(&models.Token{})
 
     Routes(server)
 
