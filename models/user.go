@@ -31,7 +31,7 @@ func GetUser(username string) (*User, error) {
   q := db.DB.Where("Username = ?", username).Find(u)
   if q.Error != nil {
     if q.RecordNotFound() {
-      return nil, NotFoundErr{}
+      return nil, NotFoundErr
     } else {
       return nil, q.Error
     }
@@ -43,7 +43,7 @@ func (user *User) Create(password string) error {
   user.SetPassword(password)
   q := db.DB.Save(user)
   if q.Error != nil {
-    return SaveErr{}
+    return SaveErr
   }
   return nil
 }

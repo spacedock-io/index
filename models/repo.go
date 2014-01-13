@@ -18,8 +18,8 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
 
   if q.Error != nil {
     if q.RecordNotFound() {
-      return nil, NotFoundErr{}
-    } else { return nil, DBErr{} }
+      return nil, NotFoundErr
+    } else { return nil, DBErr }
   }
   return r, nil
 }
@@ -39,13 +39,13 @@ func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
 
   // @TODO: make sure this access level is right
   t, ok := CreateToken("write", uid, fullname)
-  if !ok { return "", TokenErr{} }
+  if !ok { return "", TokenErr }
 
   r.Tokens = append(r.Tokens, t)
 
   q := db.DB.Save(r)
   if q.Error != nil {
-    return "", DBErr{}
+    return "", DBErr
   }
   return t.String(), nil
 }
@@ -53,7 +53,7 @@ func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
 func (repo *Repo) Delete() error {
   q := db.DB.Delete(repo)
   if q.Error != nil {
-    return DBErr{}
+    return DBErr
   }
   return nil
 }

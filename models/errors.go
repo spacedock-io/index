@@ -1,27 +1,33 @@
 package models
 
-type AlreadyExistsError struct {}
-type SaveErr struct{}
-type NotFoundErr struct{}
-type DBErr struct{}
-type TokenErr struct{}
-
-func (err AlreadyExistsError) Error() string {
-  return "Already exists"
+type Error struct {
+  Message string
+  Type string
 }
 
-func (err SaveErr) Error() string {
-  return "Error during save"
-}
+var (
+  AlreadyExistsError = &Error{
+    Message: "Already exists.",
+    Type: "exists",
+  }
+  SaveErr = &Error{
+    Message: "Error during save.",
+    Type: "save",
+  }
+  NotFoundErr = &Error{
+    Message: "Not found.",
+    Type: "not_found",
+  }
+  DBErr = &Error{
+    Message: "Database error.",
+    Type: "db",
+  }
+  TokenErr = &Error{
+    Message: "Error generating token",
+    Type: "token",
+  }
+)
 
-func (err NotFoundErr) Error() string {
-  return "Not found"
-}
-
-func (err DBErr) Error() string {
-  return "Database Error"
-}
-
-func (err TokenErr) Error() string {
-  return "Error generating token"
+func (err *Error) Error() string {
+  return err.Message
 }
