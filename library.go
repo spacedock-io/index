@@ -12,13 +12,14 @@ func CreateLibrary(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  images := req.Map["json"].([]map[string]interface{})
+  images := req.Map["json"]
 
   repo := req.Params["repo"]
 
   r := models.Repo{}
 
-  ts, err := r.Create(repo, "", "1", req.Map["_uid"].(int64), images)
+
+  ts, err := r.Create(repo, "", "1", req.Map["_uid"].(int64), images.([]interface{}))
   if err != nil {
     res.Send(err.Error(), 400)
   }
