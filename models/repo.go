@@ -43,7 +43,7 @@ func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
 
   r.Tokens = append(r.Tokens, t)
 
-  q := db.DB.Save(repo)
+  q := db.DB.Save(r)
   if q.Error != nil {
     return "", DBErr{}
   }
