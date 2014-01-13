@@ -59,9 +59,11 @@ func (user *User) MatchPassword(pass string) bool {
 }
 
 // @TODO: Make this not return a bool
-func AuthUser(user string, pass string) bool {
+func AuthUser(user string, pass string) (*User, bool) {
   u, err := GetUser(user)
-  if err != nil { return false }
-  return u.MatchPassword(pass)
+  if err != nil { return nil, false }
+  res := u.MatchPassword(pass)
+  if !res { return nil, false }
+  return u, true
 }
 
