@@ -19,6 +19,7 @@ type Email struct {
 type User struct {
   Id        int64
   Username  string
+  Admin     bool
   Emails    []Email
   Hash      []byte
   Salt      []byte
