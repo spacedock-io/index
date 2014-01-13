@@ -10,6 +10,7 @@ type Repo struct {
   Namespace     string `sql:"not null"`
   Name          string `sql:"not null;unique"`
   Tokens        []Token
+  Images        []Image
 }
 
 func GetRepo(namespace string, repo string) (*Repo, error) {
@@ -24,7 +25,8 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
   return r, nil
 }
 
-func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
+func (r *Repo) Create(repo, ns, regId string, uid int64,
+                      images []map[string]interface{}) (string, error) {
   var fullname string
   r.Name = repo
   r.RegistryId = regId
@@ -42,6 +44,12 @@ func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
   if !ok { return "", TokenErr }
 
   r.Tokens = append(r.Tokens, t)
+
+  for _, v := range images {
+    img := Image{}
+    img.Create(v["id"].(string))
+    r.Images = append(r.Images, img)
+  }
 
   q := db.DB.Save(r)
   if q.Error != nil {
