@@ -9,6 +9,7 @@ type Repo struct {
   RegistryId    string `sql:"not null"`
   Namespace     string `sql:"not null"`
   Name          string `sql:"not null;unique"`
+  Tokens        []Token
 }
 
 func GetRepo(namespace string, repo string) (*Repo, error) {
