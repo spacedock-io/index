@@ -2,10 +2,30 @@ package main
 
 import (
   "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/index/models"
 )
 
 func CreateLibrary(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  // @TODO: Make this smarter, and maybe a middleware
+  if req.Map["_admin"] != true {
+    res.Send("Not Authorized", 401)
+    return
+  }
+
+  repo := req.Params["repo"]
+
+  r := models.Repo{}
+
+  ts, err := r.Create(repo, "", "1", req.Map["_uid"].(int64))
+  if err != nil {
+    res.Send(err.Error(), 400)
+  }
+
+  res.Set("X-Docker-Token", ts)
+  res.Set("WWW-Authenticate", "Token " + ts)
+  res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
+
+  res.Send("Created", 200)
 }
 
 func DeleteLibrary(req *f.Request, res *f.Response, next func()) {
