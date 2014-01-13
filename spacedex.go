@@ -70,6 +70,8 @@ func main() {
     db := db.New(config.Global)
     db.CreateTable(&models.User{})
     db.CreateTable(&models.Email{})
+    db.CreateTable(&models.Repo{})
+    db.CreateTable(&models.Token{})
 
     Routes(server)
 
