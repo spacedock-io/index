@@ -24,12 +24,30 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
   return r, nil
 }
 
-func (repo *Repo) Create() error {
+func (r *Repo) Create(repo, ns, regId string, uid int64) (string, error) {
+  var fullname string
+  r.Name = repo
+  r.RegistryId = regId
+
+  if len(ns) == 0 {
+    fullname = "library/" + repo
+    r.Namespace = ""
+  } else {
+    fullname = ns + "/" + repo
+    r.Namespace = ns
+  }
+
+  // @TODO: make sure this access level is right
+  t, ok := CreateToken("write", uid, fullname)
+  if !ok { return "", TokenErr{} }
+
+  r.Tokens = append(r.Tokens, t)
+
   q := db.DB.Save(repo)
   if q.Error != nil {
-    return DBErr{}
+    return "", DBErr{}
   }
-  return nil
+  return t.String(), nil
 }
 
 func (repo *Repo) Delete() error {
