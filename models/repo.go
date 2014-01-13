@@ -2,7 +2,6 @@ package models
 
 import (
   "github.com/spacedock-io/registry/db"
-  "fmt"
 )
 
 type Repo struct {
@@ -44,7 +43,6 @@ func (r *Repo) Create(repo, ns, regId string, uid int64,
   t, ok := CreateToken("write", uid, fullname)
   if !ok { return "", TokenErr }
 
-  fmt.Println("About to append token!")
   r.Tokens = append(r.Tokens, t)
 
   for _, v := range images {
@@ -54,7 +52,6 @@ func (r *Repo) Create(repo, ns, regId string, uid int64,
     img.Create(id)
     r.Images = append(r.Images, img)
   }
-  fmt.Println("All images generated!")
 
   q := db.DB.Save(r)
   if q.Error != nil {
