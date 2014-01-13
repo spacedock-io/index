@@ -10,10 +10,10 @@ type Token struct {
   Signature string
   Access    string
   UserId    int64
-  Repo      string
+  RepoId    int64
 }
 
-func CreateToken(access, repo string, uid int64) (Token, bool) {
+func CreateToken(access string, uid int64) (Token, bool) {
   token := Token{}
   // @TODO: Validate access string
   token.Access = access
@@ -23,6 +23,5 @@ func CreateToken(access, repo string, uid int64) (Token, bool) {
   }
   token.Signature = sig
   token.UserId = uid
-  token.Repo = repo
   return token, true
 }

@@ -16,7 +16,7 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   r.RegistryId = "221"
 
   // @TODO: make sure this access level is right
-  t, ok := models.CreateToken("write", fullname, req.Map["_uid"].(int64))
+  t, ok := models.CreateToken("write", req.Map["_uid"].(int64))
   if !ok { res.Send("Token error", 400) }
 
   r.Tokens = append(r.Tokens, t)
