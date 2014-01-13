@@ -1,7 +1,6 @@
 package models
 
 import (
-  //"github.com/spacedock-io/registry/db"
   "github.com/gokyle/uuid"
 )
 
