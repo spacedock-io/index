@@ -8,24 +8,31 @@ import (
 func CreateRepo(req *f.Request, res *f.Response, next func()) {
   namespace := req.Params["namespace"]
   repo := req.Params["repo"]
+  fullname := namespace + "/" + repo
 
   r := &models.Repo{}
   r.Namespace = namespace
   r.Name = repo
   r.RegistryId = "221"
 
-  // Token stuff would go here
+  // @TODO: make sure this access level is right
+  t, ok := models.CreateToken("write", fullname, req.Map["_uid"].(int64))
+  if !ok { res.Send("Token error", 400) }
+
+  r.Tokens = append(r.Tokens, t)
 
   err := r.Create()
   if err != nil {
     res.Send(err.Error(), 400)
   }
 
-  res.Set("X-Docker-Token", "token string value")
-  res.Set("WWW-Authenticate", "Token " + "token string value")
+  tokenString := "signature=" + t.Signature + ",repository=" + fullname + ",access=" + t.Access
 
+  res.Set("X-Docker-Token", tokenString)
+  res.Set("WWW-Authenticate", "Token " + tokenString)
   res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
-  res.Send("Not implemented yet.")
+
+  res.Send("Created", 200)
 }
 
 func DeleteRepo(req *f.Request, res *f.Response, next func()) {
