@@ -1,6 +1,7 @@
 package models
 
 import (
+  "fmt"
   "github.com/gokyle/uuid"
 )
 
@@ -10,9 +11,10 @@ type Token struct {
   Access    string
   UserId    int64
   RepoId    int64
+  Repo      string
 }
 
-func CreateToken(access string, uid int64) (Token, bool) {
+func CreateToken(access string, uid int64, repo string) (Token, bool) {
   token := Token{}
   // @TODO: Validate access string
   token.Access = access
@@ -22,5 +24,11 @@ func CreateToken(access string, uid int64) (Token, bool) {
   }
   token.Signature = sig
   token.UserId = uid
+  token.Repo = repo
   return token, true
+}
+
+func (token *Token) String() string {
+  return fmt.Sprintf("signature=%s,repository=%s,access=%s", token.Signature,
+    token.Repo, token.Access)
 }
