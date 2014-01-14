@@ -4,6 +4,7 @@ import (
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/index/models"
   "github.com/spacedock-io/registry/db"
+  "strings"
 )
 
 func CreateUser(req *f.Request, res *f.Response, next func()) {
@@ -56,7 +57,13 @@ func Login(req *f.Request, res *f.Response, next func()) {
 func UpdateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, newPass string
 
-  username = req.Params["username"]
+  username = strings.ToLower(req.Params["username"])
+  u := req.Map["_user"].(models.User)
+
+  if strings.ToLower(u.Username) != username && !u.Admin {
+    res.Send("You are not authorized to update this user.", 400)
+    return
+  }
 
   if len(req.Body) > 0 {
     email = req.Body["email"]
