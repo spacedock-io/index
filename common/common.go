@@ -9,16 +9,7 @@ import (
   "github.com/spacedock-io/index/models"
 )
 
-func UnpackAuth(raw string) (creds []string, err error) {
-  auth := strings.Split(raw, " ")
-  decoded, err := base64.StdEncoding.DecodeString(auth[1])
-  if err != nil { return nil, err }
-
-  creds = strings.Split(string(decoded), ":")
-  return creds, nil
-}
-
-func CheckAuth(req *f.Request, res *f.Response, next func()) {
+func BasicAuth(req *f.Request, res *f.Response, next func()) {
   auth := req.Get("authorization")
   req.Map["_uid"] = -1
   req.Map["_admin"] = false
@@ -28,7 +19,7 @@ func CheckAuth(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  creds, err := UnpackAuth(auth)
+  creds, err := UnpackBasic(auth)
   if err != nil {
     res.Send("Unauthorized", 401)
     return
@@ -40,4 +31,32 @@ func CheckAuth(req *f.Request, res *f.Response, next func()) {
   }
   req.Map["_uid"] = u.Id
   req.Map["_admin"] = u.Admin
+}
+
+func TokenAuth(req *f.Request, res *f.Response, next func()) {
+  auth := req.Get("authorization")
+  if len(auth) == 0 {
+    res.Send("No authorization provided.", 401)
+    return
+  }
+
+  _, err := UnpackToken(auth)
+  if err != nil {
+    res.Send(err.Error(), 401)
+    return
+  }
+}
+
+func UnpackBasic(raw string) (creds []string, err error) {
+  auth := strings.Split(raw, " ")
+  decoded, err := base64.StdEncoding.DecodeString(auth[1])
+  if err != nil { return nil, err }
+
+  creds = strings.Split(string(decoded), ":")
+  return creds, nil
+}
+
+func UnpackToken(raw string) (models.Token, error) {
+  auth := strings.Split(raw, " ")
+  return models.GetTokenString(auth[1])
 }

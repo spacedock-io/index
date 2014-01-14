@@ -58,7 +58,7 @@ func GetLibraryImage(req *f.Request, res *f.Response, next func()) {
 }
 
 func LibraryAuth(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  res.Send(200)
 }
 
 func UpdateLibraryImage(req *f.Request, res *f.Response, next func()) {

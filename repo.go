@@ -33,7 +33,7 @@ func GetUserImage(req *f.Request, res *f.Response, next func()) {
 }
 
 func RepoAuth(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  res.Send(200)
 }
 
 func UpdateUserImage(req *f.Request, res *f.Response, next func()) {
