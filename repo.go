@@ -11,9 +11,10 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   repo := req.Params["repo"]
 
   images := req.Map["json"]
+  u := req.Map["_user"].(models.User)
 
   r := &models.Repo{}
-  ts, err := r.Create(repo, ns, "1", req.Map["_uid"].(int64), images.([]interface{}))
+  ts, err := r.Create(repo, ns, "1", u.Id, images.([]interface{}))
   if err != nil {
     res.Send(err.Error(), 400)
   }

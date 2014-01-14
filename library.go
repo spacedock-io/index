@@ -7,20 +7,20 @@ import (
 )
 
 func CreateLibrary(req *f.Request, res *f.Response, next func()) {
+  images := req.Map["json"]
+  u := req.Map["_user"].(models.User)
+
   // @TODO: Make this smarter, and maybe a middleware
-  if req.Map["_admin"] != true {
+  if !u.Admin {
     res.Send("Not Authorized", 401)
     return
   }
-
-  images := req.Map["json"]
 
   repo := req.Params["repo"]
 
   r := models.Repo{}
 
-
-  ts, err := r.Create(repo, "", "1", req.Map["_uid"].(int64), images.([]interface{}))
+  ts, err := r.Create(repo, "", "1", u.Id, images.([]interface{}))
   if err != nil {
     res.Send(err.Error(), 400)
   }

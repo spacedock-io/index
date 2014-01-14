@@ -11,8 +11,7 @@ import (
 
 func BasicAuth(req *f.Request, res *f.Response, next func()) {
   auth := req.Get("authorization")
-  req.Map["_uid"] = -1
-  req.Map["_admin"] = false
+  req.Map["_user"] = nil
 
   if len(auth) == 0 {
     res.Send("No authorization provided.", 401)
@@ -29,8 +28,8 @@ func BasicAuth(req *f.Request, res *f.Response, next func()) {
   if !ok {
     res.Send("Unauthorized", 401)
   }
-  req.Map["_uid"] = u.Id
-  req.Map["_admin"] = u.Admin
+
+  req.Map["_user"] = u
 }
 
 func TokenAuth(req *f.Request, res *f.Response, next func()) {
