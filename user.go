@@ -73,11 +73,6 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     newPass = req.Map["password"].(string)
   }
 
-  u, err := models.GetUser(username)
-  if err != nil {
-    res.Send(err.Error(), 400)
-  }
-
   if len(newPass) > 5 {
     u.SetPassword(newPass)
   } else if len(newPass) > 0 {
