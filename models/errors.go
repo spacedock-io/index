@@ -8,23 +8,21 @@ type Error struct {
 var (
   AlreadyExistsError = &Error{
     Message: "Already exists.",
-    Type: "exists",
   }
   SaveErr = &Error{
     Message: "Error during save.",
-    Type: "save",
   }
   NotFoundErr = &Error{
     Message: "Not found.",
-    Type: "not_found",
   }
   DBErr = &Error{
     Message: "Database error.",
-    Type: "db",
   }
   TokenErr = &Error{
     Message: "Error generating token",
-    Type: "token",
+  }
+  TokenNotFound = &Error{
+    Message: "Token could not be found.",
   }
 )
 
