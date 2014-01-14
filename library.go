@@ -3,6 +3,7 @@ package main
 import (
   "encoding/json"
   "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/registry/db"
   "github.com/spacedock-io/index/models"
 )
 
@@ -91,5 +92,35 @@ func LibraryAuth(req *f.Request, res *f.Response, next func()) {
 }
 
 func UpdateLibraryImage(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  repo := req.Params["repo"]
+  json := req.Map["json"].([]interface{})
+
+  r, err := models.GetRepo("", repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+  }
+
+  images, er := r.GetImages()
+  if er != nil {
+    res.Send(er.Error(), 400)
+  }
+
+  tx := db.DB.Begin()
+
+  for _, update := range json {
+    row := update.(map[string]interface{})
+    for _, image := range images {
+      if row["id"] == image.Id {
+        image.Checksum = row["checksum"].(string)
+        tx.Save(image)
+      }
+    }
+  }
+
+  e := tx.Commit()
+  if e != nil {
+    res.Send(er.Error(), 400)
+  }
+
+  res.Send("Created", 204)
 }
