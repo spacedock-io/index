@@ -26,7 +26,7 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
 }
 
 func (r *Repo) GetImages() ([]Image, error) {
-  i := make([]Image, 100) // @TODO Don't hard code this length
+  var i []Image
 
   q := db.DB.Model(r).Related(&i)
   if q.Error != nil {
