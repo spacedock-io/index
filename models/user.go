@@ -12,7 +12,7 @@ func init() {
 
 type Email struct {
   Id        int64
-  Email     string
+  Email     string  `sql:"not null;unique"`
   UserId    int64
 }
 
