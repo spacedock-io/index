@@ -26,7 +26,37 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
 }
 
 func DeleteRepo(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+
+  r, err := models.GetRepo(namespace, repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
+
+  if !r.Deleted {
+    ts, err := r.MarkAsDeleted(req.Map["_uid"].(int64))
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
+
+    res.Set("X-Docker-Token", ts)
+    res.Set("WWW-Authenticate", "Token " + ts)
+    res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
+
+    res.Send(202)
+    return
+  }
+
+  err = r.Delete()
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
+
+  res.Send(200)
 }
 
 func GetUserImage(req *f.Request, res *f.Response, next func()) {

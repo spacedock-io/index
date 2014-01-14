@@ -11,6 +11,7 @@ type Repo struct {
   Name          string `sql:"not null;unique"`
   Tokens        []Token
   Images        []Image
+  Deleted       bool
 }
 
 func GetRepo(namespace string, repo string) (*Repo, error) {
@@ -79,6 +80,29 @@ func (repo *Repo) Delete() error {
     return DBErr
   }
   return nil
+}
+
+func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
+  var fullname, ts string
+  if len(repo.Namespace) == 0 {
+    fullname = "library/" + repo.Name
+  } else {
+    fullname = repo.Namespace + repo.Name
+  }
+  t, ok := CreateToken("delete", uid, fullname)
+  if !ok {
+    return "", TokenErr
+  }
+
+  repo.Tokens = append(repo.Tokens, t)
+  ts = t.String()
+
+  repo.Deleted = true
+  q := db.DB.Save(repo)
+  if q.Error != nil {
+    return "", DBErr
+  }
+  return ts, nil
 }
 
 func (repo *Repo) HasToken(token string) bool {
