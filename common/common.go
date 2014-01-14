@@ -36,13 +36,13 @@ func BasicAuth(req *f.Request, res *f.Response, next func()) {
 func TokenAuth(req *f.Request, res *f.Response, next func()) {
   auth := req.Get("authorization")
   if len(auth) == 0 {
-    res.Send("No authorization provided.", 401)
+    res.Send("No authorization provided.", 403)
     return
   }
 
   _, err := UnpackToken(auth)
   if err != nil {
-    res.Send(err.Error(), 401)
+    res.Send(err.Error(), 403)
     return
   }
 }
