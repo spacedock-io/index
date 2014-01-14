@@ -25,6 +25,19 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
   return r, nil
 }
 
+func (r *Repo) GetImages() ([]Image, error) {
+  i := make([]Image, 100) // @TODO Don't hard code this length
+
+  q := db.DB.Model(r).Related(&i)
+  if q.Error != nil {
+    if q.RecordNotFound() {
+      return nil, NotFoundErr
+    } else { return nil, DBErr }
+  }
+
+  return i, nil
+}
+
 func (r *Repo) Create(repo, ns, regId string, uid int64,
                       images []interface{}) (string, error) {
   var fullname string

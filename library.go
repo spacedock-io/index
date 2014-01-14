@@ -1,6 +1,7 @@
 package main
 
 import (
+  "encoding/json"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/index/models"
 )
@@ -36,7 +37,24 @@ func DeleteLibrary(req *f.Request, res *f.Response, next func()) {
 }
 
 func GetLibraryImage(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  repo := req.Params["repo"]
+  
+  r, err := models.GetRepo("", repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+  }
+
+  images, er := r.GetImages()
+  if er != nil {
+    res.Send(er.Error(), 400)
+  }
+
+  j, e := json.Marshal(images)
+  if e != nil {
+    res.Send("Error returning data", 400)
+  }
+
+  res.Send(string(j), 200)
 }
 
 func LibraryAuth(req *f.Request, res *f.Response, next func()) {

@@ -37,7 +37,7 @@ func Routes(server *f.Server) {
   server.Put("/v1/repositories/:namespace/:repo/", common.CheckAuth, CreateRepo)
   server.Delete("/v1/repositories/:namespace/:repo/", common.CheckAuth, DeleteRepo)
   server.Put("/v1/repositories/:namespace/:repo/images/", common.CheckAuth, UpdateUserImage)
-  server.Get("/v1/repositories/:namespace/:repo/images/", common.CheckAuth, GetUserImage)
+  server.Get("/v1/repositories/:namespace/:repo/images/", GetUserImage)
 
   // Search route
   server.Get("/v1/search/", Search)
