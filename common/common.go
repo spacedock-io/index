@@ -42,6 +42,10 @@ func TokenAuth(req *f.Request, res *f.Response, next func()) {
 
   _, err := UnpackToken(auth)
   if err != nil {
+    if err == models.TokenNotFound {
+      res.Send(err.Error(), 404)
+      return
+    }
     res.Send(err.Error(), 403)
     return
   }

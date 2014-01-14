@@ -1,7 +1,6 @@
 package models
 
 import (
-  "errors"
   "fmt"
   "github.com/gokyle/uuid"
   "github.com/spacedock-io/registry/db"
@@ -48,7 +47,7 @@ func GetTokenString(token string) (Token, error) {
     Where("signature = ? and repo = ? and access = ?", t.Signature,
     t.Repo, t.Access).Find(&t)
   if q.RecordNotFound() {
-    return Token{}, errors.New("Token could not be found.")
+    return Token{}, TokenNotFound
   } else if q.Error != nil {
     return Token{}, q.Error
   }
