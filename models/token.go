@@ -49,6 +49,8 @@ func GetTokenString(token string) (Token, error) {
     t.Repo, t.Access).Find(&t)
   if q.RecordNotFound() {
     return Token{}, errors.New("Token could not be found.")
+  } else if q.Error != nil {
+    return Token{}, q.Error
   }
   return t, nil
 }
