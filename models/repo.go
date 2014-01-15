@@ -116,17 +116,36 @@ func (repo *Repo) HasToken(token string) bool {
 }
 
 func (repo *Repo) UpdateImages(updates []interface{}) error {
+  var imgs, updated []Image
+
+  q := db.DB.Model(repo).Related(&imgs)
+  if q.Error != nil {
+    return DBErr
+  }
+
   for _, update := range updates {
+    var found bool
     row := update.(map[string]interface{})
-    for _, image := range repo.Images {
-      if row["id"] == image.Id {
+    for _, image := range imgs {
+      if row["id"].(string) == image.Uuid {
         image.Checksum = row["checksum"].(string)
+        updated = append(updated, image)
+        found = true
       }
+    }
+    if !found {
+      img := Image{
+        Uuid: row["id"].(string),
+        Checksum: row["checksum"].(string),
+      }
+      updated = append(updated, img)
+      found = false
     }
   }
 
-  q := db.DB.Save(repo)
-  if q.Error != nil {
+  repo.Images = updated
+  qq := db.DB.Save(repo)
+  if qq.Error != nil {
     return DBErr
   }
 
