@@ -3,7 +3,6 @@ package main
 import (
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/index/models"
-  "github.com/spacedock-io/registry/db"
   "strings"
 )
 
@@ -61,7 +60,7 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
   u := req.Map["_user"].(*models.User)
 
   if strings.ToLower(u.Username) != username && !u.Admin {
-    res.Send("You are not authorized to update this user.", 400)
+    res.Send("You are not authorized to update this user.", 401)
     return
   }
 
@@ -73,19 +72,14 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     newPass = req.Map["password"].(string)
   }
 
-  if len(newPass) > 5 {
-    u.SetPassword(newPass)
-  } else if len(newPass) > 0 {
+  if len(newPass) < 5 {
     res.Send("Password too short", 400)
     return
   }
 
-  if len(email) > 0 { u.Emails = append(u.Emails, models.Email{Email: email}) }
-
-  q := db.DB.Save(u)
-  if q.Error != nil {
-    // gorm errors are complicated, let's not take them apart for now
-    res.Send("Unable to save", 500)
+  err := u.Update(email, newPass)
+  if err != nil {
+    res.Send(err.Error(), 400)
     return
   }
 

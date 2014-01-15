@@ -48,6 +48,22 @@ func (user *User) Create(password string) error {
   return nil
 }
 
+func (user *User) Update(email, password string) error {
+  if len(password) > 5 {
+    user.SetPassword(password)
+  }
+
+  if len(email) > 0 {
+    user.Emails = append(user.Emails, Email{Email: email})
+  }
+
+  q := db.DB.Save(user)
+  if q.Error != nil {
+    return DBErr
+  }
+  return nil
+}
+
 func (user *User) SetPassword(pass string) {
   ph := pbkdf2.HashPassword(pass)
   user.Salt = ph.Salt
