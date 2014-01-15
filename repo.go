@@ -11,7 +11,7 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   repo := req.Params["repo"]
 
   images := req.Map["json"]
-  u := req.Map["_user"].(models.User)
+  u := req.Map["_user"].(*models.User)
 
   r := &models.Repo{}
   ts, err := r.Create(repo, ns, "1", u.Id, images.([]interface{}))

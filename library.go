@@ -8,7 +8,7 @@ import (
 
 func CreateLibrary(req *f.Request, res *f.Response, next func()) {
   images := req.Map["json"]
-  u := req.Map["_user"].(models.User)
+  u := req.Map["_user"].(*models.User)
 
   // @TODO: Make this smarter, and maybe a middleware
   if !u.Admin {

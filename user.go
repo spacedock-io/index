@@ -58,7 +58,7 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, newPass string
 
   username = strings.ToLower(req.Params["username"])
-  u := req.Map["_user"].(models.User)
+  u := req.Map["_user"].(*models.User)
 
   if strings.ToLower(u.Username) != username && !u.Admin {
     res.Send("You are not authorized to update this user.", 400)
