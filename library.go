@@ -10,7 +10,6 @@ func CreateLibrary(req *f.Request, res *f.Response, next func()) {
   images := req.Map["json"]
   u := req.Map["_user"].(*models.User)
 
-  // @TODO: Make this smarter, and maybe a middleware
   if !u.Admin {
     res.Send("Not Authorized", 401)
     return
@@ -91,6 +90,12 @@ func LibraryAuth(req *f.Request, res *f.Response, next func()) {
 }
 
 func UpdateLibraryImage(req *f.Request, res *f.Response, next func()) {
+  u := req.Map["_user"].(*models.User)
+  if !u.Admin {
+    res.Send("Not Authorized", 401)
+    return
+  }
+
   repo := req.Params["repo"]
   json := req.Map["json"].([]interface{})
 

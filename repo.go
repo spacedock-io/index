@@ -86,5 +86,19 @@ func RepoAuth(req *f.Request, res *f.Response, next func()) {
 }
 
 func UpdateUserImage(req *f.Request, res *f.Response, next func()) {
-  res.Send("Not implemented yet.")
+  repo := req.Params["repo"]
+  ns := req.Params["namespace"]
+  json := req.Map["json"].([]interface{})
+
+  r, err := models.GetRepo(ns, repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+  }
+
+  er := r.UpdateImages(json)
+  if er != nil {
+    res.Send(err.Error(), 400)
+  }
+
+  res.Send("Created", 204)
 }
