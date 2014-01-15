@@ -6,12 +6,21 @@ import (
 
 type Repo struct {
   Id            int64
-  RegistryId    string `sql:"not null"`
-  Namespace     string `sql:"not null"`
-  Name          string `sql:"not null;unique"`
+  RegistryId    string  `sql:"not null"`
+  Namespace     string  `sql:"not null"`
+  Name          string  `sql:"not null;unique"`
   Tokens        []Token
   Images        []Image
   Deleted       bool
+}
+
+type Image struct {
+  Id            int64   `json:"-"`
+  Uuid          string  `json:"id"`
+  Json          []byte  `json:"-"`
+  Checksum      string  `json:"checksum,omitempty"`
+  Size          int64   `json:"size,omitempty"`
+  RepoId        int64   `json:"-"`
 }
 
 func GetRepo(namespace string, repo string) (*Repo, error) {
@@ -61,9 +70,8 @@ func (r *Repo) Create(repo, ns, regId string, uid int64,
 
   for _, v := range images {
     row := v.(map[string]interface{})
-    img := Image{}
     id := row["id"].(string)
-    img.Create(id)
+    img := Image{Uuid: id}
     r.Images = append(r.Images, img)
   }
 
