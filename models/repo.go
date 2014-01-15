@@ -114,3 +114,21 @@ func (repo *Repo) HasToken(token string) bool {
 
   return false
 }
+
+func (repo *Repo) UpdateImages(updates []interface{}) error {
+  for _, update := range updates {
+    row := update.(map[string]interface{})
+    for _, image := range repo.Images {
+      if row["id"] == image.Id {
+        image.Checksum = row["checksum"].(string)
+      }
+    }
+  }
+
+  q := db.DB.Save(repo)
+  if q.Error != nil {
+    return DBErr
+  }
+
+  return nil
+}
