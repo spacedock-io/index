@@ -69,6 +69,7 @@ func main() {
 
     db := db.New(config.Global)
     db.AutoMigrate(&models.User{})
+    db.AutoMigrate(&models.Access{})
     db.AutoMigrate(&models.Email{})
     db.AutoMigrate(&models.Repo{})
     db.AutoMigrate(&models.Token{})
