@@ -4,7 +4,6 @@ import (
   "crypto/sha256"
   "github.com/gokyle/pbkdf2"
   "github.com/spacedock-io/registry/db"
-  "strings"
 )
 
 func init() {
@@ -15,7 +14,7 @@ type Access struct {
   Id        int64
   UserId    int64
   Repo      string  `sql:"not null;unique"`
-  Access    string  `sql:not null`
+  Access    string  `sql:"not null"`
 }
 
 type Email struct {
@@ -78,13 +77,22 @@ func (user *User) SetAccess(repo string, access string) bool {
     return false
   }
 
+  var perms []Access
+
   a := Access{
     Repo: repo,
     Access: access,
   }
-  user.Access = append(user.Access, a)
 
-  q := db.DB.Save(user)
+  q := db.DB.Model(user).Related(&perms)
+  if q.Error != nil {
+    return false
+  }
+
+  perms = append(perms, a)
+  user.Access = perms
+
+  q = db.DB.Save(user)
   if q.Error != nil {
     return false
   }
@@ -93,12 +101,12 @@ func (user *User) SetAccess(repo string, access string) bool {
 }
 
 func (user *User) GetAccess(repo string) string {
-  for _, v := range user.Access {
-    if strings.ToLower(repo) == strings.ToLower(v.Repo) {
-      return v.Access
-    }
+  a :=  Access{}
+  q := db.DB.Where(&Access{UserId: user.Id, Repo: repo}).First(&a)
+  if q.Error != nil {
+    return ""
   }
-  return ""
+  return a.Access
 }
 
 func (user *User) SetPassword(pass string) {
