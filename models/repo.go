@@ -58,6 +58,11 @@ func (r *Repo) Create(regId string, user *User,
     fullname = r.Namespace + "/" + r.Name
   }
 
+  ok := user.SetAccess(fullname, "delete")
+  if !ok {
+    return "", AccessSetError
+  }
+
   // @TODO: make sure this access level is right
   t, ok := CreateToken("write", user.Id, fullname)
   if !ok { return "", TokenErr }

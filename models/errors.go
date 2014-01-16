@@ -6,6 +6,9 @@ type Error struct {
 }
 
 var (
+  AccessSetError = &Error{
+    Message: "Unable to set access.",
+  }
   AlreadyExistsError = &Error{
     Message: "Already exists.",
   }
