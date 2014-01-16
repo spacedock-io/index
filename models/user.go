@@ -4,10 +4,18 @@ import (
   "crypto/sha256"
   "github.com/gokyle/pbkdf2"
   "github.com/spacedock-io/registry/db"
+  "strings"
 )
 
 func init() {
   pbkdf2.HashFunc = sha256.New
+}
+
+type Access struct {
+  Id        int64
+  UserId    int64
+  Repo      string  `sql:"not null;unique"`
+  Access    string  `sql:not null`
 }
 
 type Email struct {
@@ -20,6 +28,7 @@ type User struct {
   Id        int64
   Username  string
   Admin     bool
+  Access    []Access
   Emails    []Email
   Hash      []byte
   Salt      []byte
@@ -62,6 +71,34 @@ func (user *User) Update(email, password string) error {
     return DBErr
   }
   return nil
+}
+
+func (user *User) SetAccess(repo string, access string) bool {
+  if len(repo) == 0 {
+    return false
+  }
+
+  a := Access{
+    Repo: repo,
+    Access: access,
+  }
+  user.Access = append(user.Access, a)
+
+  q := db.DB.Save(user)
+  if q.Error != nil {
+    return false
+  }
+
+  return true
+}
+
+func (user *User) GetAccess(repo string) string {
+  for _, v := range user.Access {
+    if strings.ToLower(repo) == strings.ToLower(v.Repo) {
+      return v.Access
+    }
+  }
+  return ""
 }
 
 func (user *User) SetPassword(pass string) {
