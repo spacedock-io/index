@@ -48,18 +48,16 @@ func (r *Repo) GetImages() ([]Image, error) {
   return i, nil
 }
 
-func (r *Repo) Create(repo, ns, regId string, uid int64,
+func (r *Repo) Create(regId string, uid int64,
                       images []interface{}) (string, error) {
   var fullname string
-  r.Name = repo
   r.RegistryId = regId
 
-  if len(ns) == 0 {
-    fullname = "library/" + repo
+  if len(r.Namespace) == 0 {
+    fullname = "library/" + r.Name
     r.Namespace = ""
   } else {
-    fullname = ns + "/" + repo
-    r.Namespace = ns
+    fullname = r.Namespace + "/" + r.Name
   }
 
   // @TODO: make sure this access level is right

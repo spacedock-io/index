@@ -15,11 +15,11 @@ func CreateLibrary(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  repo := req.Params["repo"]
+  r := &models.Repo{
+    Name: req.Params["repo"],
+  }
 
-  r := models.Repo{}
-
-  ts, err := r.Create(repo, "", "1", u.Id, images.([]interface{}))
+  ts, err := r.Create("1", u.Id, images.([]interface{}))
   if err != nil {
     res.Send(err.Error(), 400)
   }
