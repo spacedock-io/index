@@ -46,7 +46,7 @@ func (r *Repo) GetImages() ([]Image, error) {
   return i, nil
 }
 
-func (r *Repo) Create(regId string, uid int64,
+func (r *Repo) Create(regId string, user *User,
                       images []interface{}) (string, error) {
   var fullname string
   r.RegistryId = regId
@@ -59,7 +59,7 @@ func (r *Repo) Create(regId string, uid int64,
   }
 
   // @TODO: make sure this access level is right
-  t, ok := CreateToken("write", uid, fullname)
+  t, ok := CreateToken("write", user.Id, fullname)
   if !ok { return "", TokenErr }
 
   r.Tokens = append(r.Tokens, t)
