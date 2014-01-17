@@ -44,7 +44,7 @@ func GetToken(user *User, repo, access string) (Token, error) {
     return Token{}, q.Error
   }
 
-  return Token{}, nil
+  return t, nil
 }
 
 func GetTokenString(token string) (Token, error) {
