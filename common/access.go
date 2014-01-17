@@ -44,6 +44,7 @@ func DeleteAccess(req *f.Request, res *f.Response, next func()) {
       return
     }
     res.Set("x-docker-token", token.String())
+    res.Set("www-authenticate", "Token " + token.String())
   }
 }
 
@@ -70,6 +71,7 @@ func ReadAccess(req *f.Request, res *f.Response, next func()) {
       return
     }
     res.Set("x-docker-token", token.String())
+    res.Set("www-authenticate", "Token " + token.String())
   }
 }
 
@@ -97,5 +99,6 @@ func WriteAccess(req *f.Request, res *f.Response, next func()) {
       return
     }
     res.Set("x-docker-token", token.String())
+    res.Set("www-authenticate", "Token " + token.String())
   }
 }
