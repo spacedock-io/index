@@ -58,9 +58,7 @@ func GetTokenString(token string) (Token, error) {
     }
   }
 
-  q := db.DB.Table("tokens").
-    Where("signature = ? and repo = ? and access = ?", t.Signature,
-    t.Repo, t.Access).Find(&t)
+  q := db.DB.Where(&t).Find(&t)
   if q.RecordNotFound() {
     return Token{}, TokenNotFound
   } else if q.Error != nil {
