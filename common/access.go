@@ -3,7 +3,6 @@ package common
 import (
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/index/models"
-  // "github.com/spacedock-io/registry/db"
   "strings"
 )
 
