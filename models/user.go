@@ -72,7 +72,11 @@ func (user *User) Update(email, password string) error {
   return nil
 }
 
-func (user *User) SetAccess(repo string, access string) bool {
+func (user *User) SetAccess(ns, repo, access string) bool {
+  if len(ns) > 0 {
+    repo = ns + "/" + repo
+  }
+
   if len(repo) == 0 {
     return false
   }
@@ -100,7 +104,11 @@ func (user *User) SetAccess(repo string, access string) bool {
   return true
 }
 
-func (user *User) GetAccess(repo string) string {
+func (user *User) GetAccess(ns, repo string) string {
+  if len(ns) > 0 {
+    repo = ns + "/" + repo
+  }
+
   a :=  Access{}
   q := db.DB.Where(&Access{UserId: user.Id, Repo: repo}).First(&a)
   if q.Error != nil {

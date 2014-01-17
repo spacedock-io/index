@@ -58,7 +58,7 @@ func (r *Repo) Create(regId string, user *User,
     fullname = r.Namespace + "/" + r.Name
   }
 
-  ok := user.SetAccess(fullname, "delete")
+  ok := user.SetAccess(r.Namespace, r.Name, "delete")
   if !ok {
     return "", AccessSetError
   }
