@@ -30,6 +30,21 @@ func CreateToken(access string, uid int64, repo string) (Token, bool) {
   return token, true
 }
 
+func GetToken(user *User, repo, access string) (Token, error) {
+  t := Token{
+    UserId: user.Id,
+    Access: access,
+    Repo: repo,
+  }
+
+  q := db.DB.Where(&t).Find(&t)
+  if q.Error != nil {
+    return Token{}, q.Error
+  }
+
+  return Token{}, nil
+}
+
 func GetTokenString(token string) (Token, error) {
   t := Token{}
 
