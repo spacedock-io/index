@@ -32,8 +32,19 @@ func DeleteAccess(req *f.Request, res *f.Response, next func()) {
     res.Send("You do not have access to delete this repository.", 400)
   }
 
+  if len(ns) == 0 {
+    ns = "library"
+  }
+
+  repo = ns + "/" + repo
+
   if wantsToken(req) {
-    // Create the token and return it
+    token, err := models.GetToken(user, repo, "delete")
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
+    res.Set("x-docker-token", token.String())
   }
 }
 
@@ -47,8 +58,19 @@ func ReadAccess(req *f.Request, res *f.Response, next func()) {
     res.Send("You do not have access to read from this repository.", 400)
   }
 
+  if len(ns) == 0 {
+    ns = "library"
+  }
+
+  repo = ns + "/" + repo
+
   if wantsToken(req) {
-    // Create the token and return it
+    token, err := models.GetToken(user, repo, "read")
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
+    res.Set("x-docker-token", token.String())
   }
 }
 
@@ -63,11 +85,18 @@ func WriteAccess(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  if len(ns) > 0 {
-    repo = ns + "/" + repo
+  if len(ns) == 0 {
+    ns = "library"
   }
 
+  repo = ns + "/" + repo
+
   if wantsToken(req) {
-    // Create the token and return it
+    token, err := models.GetToken(user, repo, "write")
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
+    res.Set("x-docker-token", token.String())
   }
 }
