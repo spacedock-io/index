@@ -53,7 +53,6 @@ func (r *Repo) Create(regId string, user *User,
 
   if len(r.Namespace) == 0 {
     fullname = "library/" + r.Name
-    r.Namespace = ""
   } else {
     fullname = r.Namespace + "/" + r.Name
   }

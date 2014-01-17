@@ -67,7 +67,7 @@ func DeleteLibrary(req *f.Request, res *f.Response, next func()) {
 func GetLibraryImage(req *f.Request, res *f.Response, next func()) {
   repo := req.Params["repo"]
   
-  r, err := models.GetRepo("", repo)
+  r, err := models.GetRepo("library", repo)
   if err != nil {
     res.Send(err.Error(), 400)
   }
