@@ -41,7 +41,7 @@ func GetToken(user *User, repo, access string) (Token, error) {
   if q.RecordNotFound() {
     return Token{}, TokenNotFound
   } else if q.Error != nil {
-    return Token{}, q.Error
+    return Token{}, DBErr
   }
 
   return t, nil
