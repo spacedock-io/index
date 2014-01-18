@@ -23,6 +23,7 @@ func main() {
 
   // Initialize new Forgery server
   server := f.CreateServer()
+  server.Use(f.ErrorHandler())
   server.Use(middleware.BodyParser)
   server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
     res.SetHeader("X-Docker-Registry-Version", "0.7.4")
