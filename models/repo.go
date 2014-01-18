@@ -75,10 +75,11 @@ func (r *Repo) Create(regId string, user *User,
     r.Images = append(r.Images, img)
   }
 
-  q := db.DB.Save(r)
-  if q.Error != nil {
-    return "", DBErr
+  err := r.Save()
+  if err != nil {
+    return "", err
   }
+
   return t.String(), nil
 }
 
@@ -116,11 +117,21 @@ func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
   ts = t.String()
 
   repo.Deleted = true
-  q := db.DB.Save(repo)
-  if q.Error != nil {
-    return "", DBErr
+
+  err := repo.Save()
+  if err != nil {
+    return "", err
   }
+
   return ts, nil
+}
+
+func (r *Repo) Save() error {
+  q := db.DB.Save(r)
+  if q.Error != nil {
+    return DBErr
+  }
+  return nil
 }
 
 func (repo *Repo) UpdateImages(updates []interface{}) error {
@@ -152,9 +163,10 @@ func (repo *Repo) UpdateImages(updates []interface{}) error {
   }
 
   repo.Images = updated
-  qq := db.DB.Save(repo)
-  if qq.Error != nil {
-    return DBErr
+
+  err := repo.Save()
+  if err != nil {
+    return err
   }
 
   return nil
