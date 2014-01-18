@@ -90,6 +90,16 @@ func (repo *Repo) Delete() error {
   return nil
 }
 
+func (repo *Repo) HasToken(token string) bool {
+  for _, v := range repo.Tokens {
+    if v.String() == token {
+      return true
+    }
+  }
+
+  return false
+}
+
 func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
   var fullname, ts string
   if len(repo.Namespace) == 0 {
@@ -111,16 +121,6 @@ func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
     return "", DBErr
   }
   return ts, nil
-}
-
-func (repo *Repo) HasToken(token string) bool {
-  for _, v := range repo.Tokens {
-    if v.String() == token {
-      return true
-    }
-  }
-
-  return false
 }
 
 func (repo *Repo) UpdateImages(updates []interface{}) error {

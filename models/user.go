@@ -34,6 +34,15 @@ type User struct {
 }
 
 
+// @TODO: Make this not return a bool
+func AuthUser(user string, pass string) (*User, bool) {
+  u, err := GetUser(user)
+  if err != nil { return nil, false }
+  res := u.MatchPassword(pass)
+  if !res { return nil, false }
+  return u, true
+}
+
 func GetUser(username string) (*User, error) {
   u := &User{}
   q := db.DB.Where("Username = ?", username).Find(u)
@@ -56,20 +65,17 @@ func (user *User) Create(password string) error {
   return nil
 }
 
-func (user *User) Update(email, password string) error {
-  if len(password) > 5 {
-    user.SetPassword(password)
+func (user *User) GetAccess(ns, repo string) string {
+  if len(ns) > 0 {
+    repo = ns + "/" + repo
   }
 
-  if len(email) > 0 {
-    user.Emails = append(user.Emails, Email{Email: email})
-  }
-
-  q := db.DB.Save(user)
+  a :=  Access{}
+  q := db.DB.Where(&Access{UserId: user.Id, Repo: repo}).First(&a)
   if q.Error != nil {
-    return DBErr
+    return ""
   }
-  return nil
+  return a.Access
 }
 
 func (user *User) SetAccess(ns, repo, access string) bool {
@@ -104,19 +110,6 @@ func (user *User) SetAccess(ns, repo, access string) bool {
   return true
 }
 
-func (user *User) GetAccess(ns, repo string) string {
-  if len(ns) > 0 {
-    repo = ns + "/" + repo
-  }
-
-  a :=  Access{}
-  q := db.DB.Where(&Access{UserId: user.Id, Repo: repo}).First(&a)
-  if q.Error != nil {
-    return ""
-  }
-  return a.Access
-}
-
 func (user *User) SetPassword(pass string) {
   ph := pbkdf2.HashPassword(pass)
   user.Salt = ph.Salt
@@ -128,12 +121,18 @@ func (user *User) MatchPassword(pass string) bool {
   return pbkdf2.MatchPassword(pass, ph)
 }
 
-// @TODO: Make this not return a bool
-func AuthUser(user string, pass string) (*User, bool) {
-  u, err := GetUser(user)
-  if err != nil { return nil, false }
-  res := u.MatchPassword(pass)
-  if !res { return nil, false }
-  return u, true
-}
+func (user *User) Update(email, password string) error {
+  if len(password) > 5 {
+    user.SetPassword(password)
+  }
 
+  if len(email) > 0 {
+    user.Emails = append(user.Emails, Email{Email: email})
+  }
+
+  q := db.DB.Save(user)
+  if q.Error != nil {
+    return DBErr
+  }
+  return nil
+}
