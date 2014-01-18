@@ -23,6 +23,7 @@ func main() {
 
   // Initialize new Forgery server
   server := f.CreateServer()
+  server.Use(f.ErrorHandler())
   server.Use(middleware.BodyParser)
   server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
     res.SetHeader("X-Docker-Registry-Version", "0.7.4")
@@ -69,6 +70,7 @@ func main() {
 
     db := db.New(config.Global)
     db.AutoMigrate(&models.User{})
+    db.AutoMigrate(&models.Access{})
     db.AutoMigrate(&models.Email{})
     db.AutoMigrate(&models.Repo{})
     db.AutoMigrate(&models.Token{})

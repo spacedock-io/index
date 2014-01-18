@@ -33,6 +33,18 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
   return r, nil
 }
 
+func (r *Repo) AddToken(access string, user *User) (Token, error) {
+  repo := r.Namespace + "/" + r.Name
+
+  t, ok := CreateToken(access, user.Id, repo)
+  if !ok {
+    return Token{}, TokenErr
+  }
+
+  r.Tokens = append(r.Tokens, t)
+  return t, nil
+}
+
 func (r *Repo) GetImages() ([]Image, error) {
   var i []Image
 
@@ -46,23 +58,23 @@ func (r *Repo) GetImages() ([]Image, error) {
   return i, nil
 }
 
-func (r *Repo) Create(regId string, uid int64,
+func (r *Repo) Create(regId string, user *User,
                       images []interface{}) (string, error) {
-  var fullname string
   r.RegistryId = regId
 
   if len(r.Namespace) == 0 {
-    fullname = "library/" + r.Name
-    r.Namespace = ""
-  } else {
-    fullname = r.Namespace + "/" + r.Name
+    r.Namespace = "library"
   }
 
-  // @TODO: make sure this access level is right
-  t, ok := CreateToken("write", uid, fullname)
-  if !ok { return "", TokenErr }
+  ok := user.SetAccess(r.Namespace, r.Name, "delete")
+  if !ok {
+    return "", AccessSetError
+  }
 
-  r.Tokens = append(r.Tokens, t)
+  t, err := r.AddToken("write", user)
+  if err != nil {
+    return "", err
+  }
 
   for _, v := range images {
     row := v.(map[string]interface{})
@@ -71,10 +83,11 @@ func (r *Repo) Create(regId string, uid int64,
     r.Images = append(r.Images, img)
   }
 
-  q := db.DB.Save(r)
-  if q.Error != nil {
-    return "", DBErr
+  err = r.Save()
+  if err != nil {
+    return "", err
   }
+
   return t.String(), nil
 }
 
@@ -84,6 +97,16 @@ func (repo *Repo) Delete() error {
     return DBErr
   }
   return nil
+}
+
+func (repo *Repo) HasToken(token string) bool {
+  for _, v := range repo.Tokens {
+    if v.String() == token {
+      return true
+    }
+  }
+
+  return false
 }
 
 func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
@@ -102,21 +125,21 @@ func (repo *Repo) MarkAsDeleted(uid int64) (string, error) {
   ts = t.String()
 
   repo.Deleted = true
-  q := db.DB.Save(repo)
-  if q.Error != nil {
-    return "", DBErr
+
+  err := repo.Save()
+  if err != nil {
+    return "", err
   }
+
   return ts, nil
 }
 
-func (repo *Repo) HasToken(token string) bool {
-  for _, v := range repo.Tokens {
-    if v.String() == token {
-      return true
-    }
+func (r *Repo) Save() error {
+  q := db.DB.Save(r)
+  if q.Error != nil {
+    return DBErr
   }
-
-  return false
+  return nil
 }
 
 func (repo *Repo) UpdateImages(updates []interface{}) error {
@@ -148,9 +171,10 @@ func (repo *Repo) UpdateImages(updates []interface{}) error {
   }
 
   repo.Images = updated
-  qq := db.DB.Save(repo)
-  if qq.Error != nil {
-    return DBErr
+
+  err := repo.Save()
+  if err != nil {
+    return err
   }
 
   return nil

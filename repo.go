@@ -14,7 +14,8 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
     Namespace: req.Params["namespace"],
     Name: req.Params["repo"],
   }
-  ts, err := r.Create("1", u.Id, images.([]interface{}))
+
+  ts, err := r.Create("1", u, images.([]interface{}))
   if err != nil {
     res.Send(err.Error(), 400)
   }
