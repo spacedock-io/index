@@ -33,6 +33,18 @@ func GetRepo(namespace string, repo string) (*Repo, error) {
   return r, nil
 }
 
+func (r *Repo) AddToken(access string, user *User) (Token, error) {
+  repo := r.Namespace + "/" + r.Name
+
+  t, ok := CreateToken(access, user.Id, repo)
+  if !ok {
+    return Token{}, TokenErr
+  }
+
+  r.Tokens = append(r.Tokens, t)
+  return t, nil
+}
+
 func (r *Repo) GetImages() ([]Image, error) {
   var i []Image
 
@@ -48,13 +60,10 @@ func (r *Repo) GetImages() ([]Image, error) {
 
 func (r *Repo) Create(regId string, user *User,
                       images []interface{}) (string, error) {
-  var fullname string
   r.RegistryId = regId
 
   if len(r.Namespace) == 0 {
-    fullname = "library/" + r.Name
-  } else {
-    fullname = r.Namespace + "/" + r.Name
+    r.Namespace = "library"
   }
 
   ok := user.SetAccess(r.Namespace, r.Name, "delete")
@@ -62,11 +71,10 @@ func (r *Repo) Create(regId string, user *User,
     return "", AccessSetError
   }
 
-  // @TODO: make sure this access level is right
-  t, ok := CreateToken("write", user.Id, fullname)
-  if !ok { return "", TokenErr }
-
-  r.Tokens = append(r.Tokens, t)
+  t, err := r.AddToken("write", user)
+  if err != nil {
+    return "", err
+  }
 
   for _, v := range images {
     row := v.(map[string]interface{})
@@ -75,7 +83,7 @@ func (r *Repo) Create(regId string, user *User,
     r.Images = append(r.Images, img)
   }
 
-  err := r.Save()
+  err = r.Save()
   if err != nil {
     return "", err
   }
