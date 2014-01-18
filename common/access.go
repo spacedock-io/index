@@ -21,20 +21,32 @@ func sendToken(req *f.Request, res *f.Response, access string) {
   ok := hasAccess(user, ns, repo, access)
   if !ok {
     res.Send("You do not have access to perform this action.", 400)
+    return
   }
 
   if len(ns) == 0 {
     ns = "library"
   }
 
-  repo = ns + "/" + repo
+  r, err := models.GetRepo(ns, repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
 
   if wantsToken(req) {
-    token, err := models.GetToken(user, repo, access)
+    token, err := r.AddToken(access, user)
     if err != nil {
       res.Send(err.Error(), 400)
       return
     }
+
+    err = r.Save()
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
+
     res.Set("x-docker-token", token.String())
     res.Set("www-authenticate", "Token " + token.String())
   }
