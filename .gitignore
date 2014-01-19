@@ -16,7 +16,7 @@ node_modules
 
 # Ignore potential binaries
 spacedex
-index.spacedock
+index
 
 # Compiled go tests
 *.test
