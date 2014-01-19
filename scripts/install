@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+curl http://go.googlecode.com/files/go1.2.linux-amd64.tar.gz | tar -C /usr/local -xzf-
+
+gopath="$HOME/go"
+mkdir "$gopath"
+echo "export PATH=\"$PATH:/usr/local/go/bin:$gopath\"" >> /etc/profile
+echo "export GOPATH=\"$gopath\"" >> /etc/profile
