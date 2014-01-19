@@ -5,43 +5,31 @@ import (
   "github.com/stretchr/testify/assert"
 )
 
-var (
-  username = "foo"
-  email = "foo@bar.com"
-  pass = "4321"
-  user = &User{
-    Username: username,
-    Email: email,
-    Pass: HexString(pass),
-  }
-)
-
 func TestUserCreate(t *testing.T) {
-  err := user.Create()
+  err := SpacedockUser.Create(SpacedockUserPassword)
   assert.Nil(t, err, "Error should be `nil`")
 }
 
 func TestUserAlreadyExists(t *testing.T) {
-  err := user.Create()
+  err := SpacedockUser.Create(SpacedockUserPassword)
   assert.NotNil(t, err, "Error should not be `nil`")
-  assert.IsType(t, AlreadyExistsError{}, err)
 }
 
 func TestUserGet(t *testing.T) {
-  getUser, getError := GetUser(username)
+  getUser, getError := GetUser(SpacedockUser.Username)
   assert.Nil(t, getError, "Get error should be `nil`")
-  assert.True(t, getUser.MatchPassword(pass), "Password should match")
-  assert.Equal(t, getUser.Username, username)
+  assert.True(t, getUser.MatchPassword(SpacedockUserPassword), "Password should match")
+  assert.Equal(t, getUser.Username, SpacedockUser.Username)
 }
 
 func TestUserDelete(t *testing.T) {
-  user, err := GetUser(username)
+  user, err := GetUser(SpacedockUser.Username)
   assert.Nil(t, err, "Get error should be `nil`")
   err = user.Delete()
   assert.Nil(t, err, "Delete error should be `nil`")
 }
 
 func TestNoSuchUser(t *testing.T) {
-  getUser, _ := GetUser(username)
+  getUser, _ := GetUser(SpacedockUser.Username)
   assert.Nil(t, getUser, "User shouldn't exists after being deleted")
 }
