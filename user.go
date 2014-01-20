@@ -9,6 +9,13 @@ import (
 func CreateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, password string
 
+  // @TODO: Make a function to also check if the email is already used
+  _, err := models.GetUser(username)
+  if err == nil {
+    res.Send("", 401)
+    return
+  }
+
   json := req.Map["json"].(map[string]interface{})
 
   if len(req.Body) > 0 {
