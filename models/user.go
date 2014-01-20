@@ -13,7 +13,7 @@ func init() {
 type Access struct {
   Id        int64
   UserId    int64
-  Repo      string  `sql:"not null;unique"`
+  Repo      string
   Access    string  `sql:"not null"`
 }
 
