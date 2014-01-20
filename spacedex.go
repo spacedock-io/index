@@ -53,11 +53,13 @@ func main() {
     server := f.CreateServer()
     server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
       config.Logger.Log(fmt.Sprintf("%s %s", req.Method, req.Url))
+      next()
     })
     server.Use(f.ErrorHandler())
     server.Use(middleware.BodyParser)
     server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
       res.SetHeader("X-Docker-Registry-Version", "0.7.4")
+      next()
     })
 
     port := c.Int("port")
