@@ -21,15 +21,6 @@ func main() {
   // Initialize new CLI app
   app := cli.NewApp()
 
-  // Initialize new Forgery server
-  server := f.CreateServer()
-  server.Use(f.ErrorHandler())
-  server.Use(middleware.BodyParser)
-  server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
-    res.SetHeader("X-Docker-Registry-Version", "0.7.4")
-    next()
-  })
-
   app.Name = "spacedex"
   app.Author = "Spacedock"
   app.Email = "hello@spacedock.io"
@@ -57,6 +48,14 @@ func main() {
 
     config.Global = config.Load(env)
     config.Logger = logger.New()
+
+    // Initialize new Forgery server
+    server := f.CreateServer()
+    server.Use(f.ErrorHandler())
+    server.Use(middleware.BodyParser)
+    server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
+      res.SetHeader("X-Docker-Registry-Version", "0.7.4")
+    })
 
     port := c.Int("port")
     if port == 0 {
