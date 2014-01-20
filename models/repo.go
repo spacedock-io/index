@@ -8,7 +8,7 @@ type Repo struct {
   Id            int64
   RegistryId    string  `sql:"not null"`
   Namespace     string  `sql:"not null"`
-  Name          string  `sql:"not null;unique"`
+  Name          string  `sql:"not null"`
   Tokens        []Token
   Images        []Image
   Deleted       bool
