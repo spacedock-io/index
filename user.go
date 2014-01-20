@@ -9,22 +9,22 @@ import (
 func CreateUser(req *f.Request, res *f.Response, next func()) {
   var username, email, password string
 
+  json := req.Map["json"].(map[string]interface{})
+
+if len(json) > 0 {
+  username, _ = json["username"].(string)
+  password, _ = json["password"].(string)
+  email, _ = json["email"].(string)
+} else {
+  res.Send("Bad Request", 400)
+  return
+}
+
   // @TODO: Make a function to also check if the email is already used
   _, err := models.GetUser(username)
   if err == nil {
     res.Send("", 401)
     return
-  }
-
-  json := req.Map["json"].(map[string]interface{})
-
-  if len(req.Body) > 0 {
-    username, email, password = req.Body["username"], req.Body["email"],
-      req.Body["password"]
-  } else if len(json) > 0 {
-    username, _ = json["username"].(string)
-    password, _ = json["password"].(string)
-    email, _ = json["email"].(string)
   }
 
   // @TODO: Validate email format
@@ -71,12 +71,11 @@ func UpdateUser(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  if len(req.Body) > 0 {
-    email = req.Body["email"]
-    newPass = req.Body["password"]
-  } else if len(req.Map) > 0 {
-    email = req.Map["email"].(string)
-    newPass = req.Map["password"].(string)
+  json := req.Map["json"].(map[string]interface{})
+
+  if len(json) > 0 {
+    email = json["email"].(string)
+    newPass = json["password"].(string)
   }
 
   if len(newPass) < 5 {
