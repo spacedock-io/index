@@ -26,7 +26,7 @@ func CreateLibrary(req *f.Request, res *f.Response, next func()) {
 
   res.Set("X-Docker-Token", ts)
   res.Set("WWW-Authenticate", "Token " + ts)
-  res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
+  res.Set("X-Docker-Endpoints", "staging.spacedock.io:8081")
 
   res.Send("Created", 200)
 }
@@ -49,7 +49,7 @@ func DeleteLibrary(req *f.Request, res *f.Response, next func()) {
 
     res.Set("X-Docker-Token", ts)
     res.Set("WWW-Authenticate", "Token " + ts)
-    res.Set("X-Docker-Endpoints", "reg22.spacedock.io, reg41.spacedock.io")
+    res.Set("X-Docker-Endpoints", "staging.spacedock.io:8081")
 
     res.Send(202)
     return
