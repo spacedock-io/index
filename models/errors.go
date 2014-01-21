@@ -12,6 +12,9 @@ var (
   AlreadyExistsError = &Error{
     Message: "Already exists.",
   }
+  AuthErr = &Error{
+    Message: "Authorization failed.",
+  }
   SaveErr = &Error{
     Message: "Error during save.",
   }
