@@ -66,6 +66,11 @@ func (r *Repo) Create(regId string, user *User,
     r.Namespace = "library"
   }
 
+  q := db.DB.Where("namespace = ? and name = ?", r.Namespace, r.Name).Find(&Repo{})
+  if !q.RecordNotFound() {
+    return "", AlreadyExistsError
+  }
+
   ok := user.SetAccess(r.Namespace, r.Name, "delete")
   if !ok {
     return "", AccessSetError
