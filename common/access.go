@@ -73,6 +73,25 @@ func hasAccess(user *models.User, ns, repo, access string) bool {
 
 func Access(access string) func(*f.Request, *f.Response, func()) {
   return func(req *f.Request, res *f.Response, next func()) {
-    sendToken(req, res, access)
+    auth := req.Get("authorization")
+    a := strings.Split(auth, " ")
+
+    if a[0] == "Basic" {
+      u, err := HandleBasic(auth)
+      if err != nil {
+        res.Send(401)
+        return
+      } else {
+        req.Map["_user"] = u
+        sendToken(req, res, access)
+      }
+    } else if a[0] == "Token" {
+      _, err := HandleToken(auth)
+      if err != nil {
+        res.Send(401)
+        return
+      }
+    }
   }
 }
+
