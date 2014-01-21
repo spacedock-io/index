@@ -47,7 +47,7 @@ func GetToken(user *User, repo, access string) (Token, error) {
   return t, nil
 }
 
-func GetTokenString(token string) (Token, error) {
+func UseTokenString(token string) (Token, error) {
   t := Token{}
 
   split := strings.Split(token, ",")
@@ -66,6 +66,7 @@ func GetTokenString(token string) (Token, error) {
   } else if q.Error != nil {
     return Token{}, q.Error
   }
+  defer db.DB.Delete(&t)
   return t, nil
 }
 
