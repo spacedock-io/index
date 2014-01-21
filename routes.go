@@ -21,7 +21,7 @@ func Routes(server *f.Server) {
   server.Put("/v1/repositories/:repo/", common.BasicAuth, CreateLibrary)
   server.Delete("/v1/repositories/:repo/", common.BasicAuth, DeleteLibrary)
   server.Put("/v1/repositories/:repo/images/", common.BasicAuth, UpdateLibraryImage)
-  server.Get("/v1/repositories/:repo/images/", common.BasicAuth, GetLibraryImage)
+  server.Get("/v1/repositories/:repo/images/", common.Access("read"), GetLibraryImage)
 
   /*
     User routes
@@ -37,7 +37,7 @@ func Routes(server *f.Server) {
   server.Put("/v1/repositories/:namespace/:repo/", common.BasicAuth, CreateRepo)
   server.Delete("/v1/repositories/:namespace/:repo/", common.BasicAuth, DeleteRepo)
   server.Put("/v1/repositories/:namespace/:repo/images/", common.BasicAuth, UpdateUserImage)
-  server.Get("/v1/repositories/:namespace/:repo/images/", common.BasicAuth, GetUserImage)
+  server.Get("/v1/repositories/:namespace/:repo/images/", common.Access("read"), GetUserImage)
 
   // Search route
   server.Get("/v1/search/", Search)
