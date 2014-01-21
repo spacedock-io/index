@@ -16,6 +16,7 @@ var AccessMap = map[string]int{
 func sendToken(req *f.Request, res *f.Response, access string) {
   var (
     token models.Token
+    r *models.Repo
     err error
   )
 
@@ -33,13 +34,13 @@ func sendToken(req *f.Request, res *f.Response, access string) {
     ns = "library"
   }
 
-  r, err := models.GetRepo(ns, repo)
-  if err != nil {
-    res.Send(err.Error(), 400)
-    return
-  }
 
   if wantsToken(req) {
+    r, err = models.GetRepo(ns, repo)
+    if err != nil {
+      res.Send(err.Error(), 400)
+      return
+    }
     token, err = models.GetToken(user, repo, access)
     if err == models.TokenNotFound {
       token, err = r.AddToken(access, user)
