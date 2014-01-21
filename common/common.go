@@ -18,15 +18,10 @@ func BasicAuth(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  creds, err := UnpackBasic(auth)
+  u, err := HandleBasic(auth)
   if err != nil {
     res.Send("Unauthorized", 401)
     return
-  }
-
-  u, ok := models.AuthUser(creds[0], creds[1])
-  if !ok {
-    res.Send("Unauthorized", 401)
   }
 
   req.Map["_user"] = u
@@ -39,7 +34,7 @@ func TokenAuth(req *f.Request, res *f.Response, next func()) {
     return
   }
 
-  _, err := UnpackToken(auth)
+  _, err := HandleToken(auth)
   if err != nil {
     if err == models.TokenNotFound {
       res.Send(err.Error(), 404)
@@ -50,16 +45,20 @@ func TokenAuth(req *f.Request, res *f.Response, next func()) {
   }
 }
 
-func UnpackBasic(raw string) (creds []string, err error) {
+func HandleBasic(raw string) ((*models.User), error) {
   auth := strings.Split(raw, " ")
   decoded, err := base64.StdEncoding.DecodeString(auth[1])
   if err != nil { return nil, err }
 
-  creds = strings.Split(string(decoded), ":")
-  return creds, nil
+  creds := strings.Split(string(decoded), ":")
+  u, ok := models.AuthUser(creds[0], creds[1])
+  if !ok {
+    return nil, models.AuthErr
+  }
+  return u, nil
 }
 
-func UnpackToken(raw string) (models.Token, error) {
+func HandleToken(raw string) (models.Token, error) {
   auth := strings.Split(raw, " ")
-  return models.GetTokenString(auth[1])
+  return models.UseTokenString(auth[1])
 }
