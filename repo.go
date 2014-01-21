@@ -24,7 +24,7 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   res.Set("WWW-Authenticate", "Token " + ts)
   res.Set("X-Docker-Endpoints", "staging.spacedock.io:8081")
 
-  res.Send("Created", 200)
+  res.Send("\"\"", 200)
 }
 
 func DeleteRepo(req *f.Request, res *f.Response, next func()) {
@@ -101,5 +101,5 @@ func UpdateUserImage(req *f.Request, res *f.Response, next func()) {
     res.Send(err.Error(), 400)
   }
 
-  res.Send("Created", 204)
+  res.Send("\"\"", 204)
 }
