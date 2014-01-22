@@ -16,7 +16,7 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   }
 
   ts, err := r.Create("1", u, images.([]interface{}))
-  if err == models.AlreadyExistsErr {
+  if err == models.AlreadyExistsError {
     res.Send("\"\"", 200)
     return
   } else if err != nil {
