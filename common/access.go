@@ -24,10 +24,17 @@ func sendToken(req *f.Request, res *f.Response, access string) {
   ns := req.Params["namespace"]
   repo := req.Params["repo"]
 
-  ok := hasAccess(user, ns, repo, access)
-  if !ok {
-    res.Send("You do not have access to perform this action.", 400)
-    return
+  _, err = models.GetRepo(ns, repo)
+  if err != nil {
+    if err != models.NotFoundErr {
+      ok := hasAccess(user, ns, repo, access)
+      if !ok {
+        res.Send("You do not have access to perform this action.", 400)
+        return
+      }
+    } else {
+      return
+    }
   }
 
   if len(ns) == 0 {
