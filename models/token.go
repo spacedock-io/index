@@ -66,7 +66,7 @@ func UseTokenString(token string) (Token, error) {
   } else if q.Error != nil {
     return Token{}, q.Error
   }
-  defer db.DB.Delete(&t)
+
   return t, nil
 }
 
