@@ -18,9 +18,9 @@ func Routes(server *f.Server) {
     Library repository routes
    */
   server.Put("/v1/repositories/:repo/auth/", common.TokenAuth, LibraryAuth)
-  server.Put("/v1/repositories/:repo/", common.BasicAuth, CreateLibrary)
-  server.Delete("/v1/repositories/:repo/", common.BasicAuth, DeleteLibrary)
-  server.Put("/v1/repositories/:repo/images/", common.BasicAuth, UpdateLibraryImage)
+  server.Put("/v1/repositories/:repo/", common.Access("write"), CreateLibrary)
+  server.Delete("/v1/repositories/:repo/", common.Access("delete"), DeleteLibrary)
+  server.Put("/v1/repositories/:repo/images/", common.Access("write"), UpdateLibraryImage)
   server.Get("/v1/repositories/:repo/images/", common.Access("read"), GetLibraryImage)
 
   /*
@@ -34,9 +34,9 @@ func Routes(server *f.Server) {
     User repository routes
    */
   server.Put("/v1/repositories/:namespace/:repo/auth/", common.TokenAuth, RepoAuth)
-  server.Put("/v1/repositories/:namespace/:repo/", common.BasicAuth, CreateRepo)
-  server.Delete("/v1/repositories/:namespace/:repo/", common.BasicAuth, DeleteRepo)
-  server.Put("/v1/repositories/:namespace/:repo/images/", common.BasicAuth, UpdateUserImage)
+  server.Put("/v1/repositories/:namespace/:repo/", common.Access("write"), CreateRepo)
+  server.Delete("/v1/repositories/:namespace/:repo/", common.Access("delete"), DeleteRepo)
+  server.Put("/v1/repositories/:namespace/:repo/images/", common.Access("write"), UpdateUserImage)
   server.Get("/v1/repositories/:namespace/:repo/images/", common.Access("read"), GetUserImage)
 
   // Search route
