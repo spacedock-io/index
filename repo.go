@@ -101,11 +101,13 @@ func UpdateUserImage(req *f.Request, res *f.Response, next func()) {
   r, err := models.GetRepo(ns, repo)
   if err != nil {
     res.Send(err.Error(), 400)
+    return
   }
 
   er := r.UpdateImages(json)
   if er != nil {
     res.Send(err.Error(), 400)
+    return
   }
 
   res.Send("\"\"", 204)
