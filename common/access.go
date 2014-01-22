@@ -41,13 +41,17 @@ func sendToken(req *f.Request, res *f.Response, access string) {
     ns = "library"
   }
 
-
   if wantsToken(req) {
     r, err = models.GetRepo(ns, repo)
     if err != nil {
       res.Send(err.Error(), 400)
       return
     }
+    
+    if len(ns) > 0 {
+      repo = ns + "/" + repo
+    }
+
     token, err = models.GetToken(user, repo, access)
     if err == models.TokenNotFound {
       token, err = r.AddToken(access, user)
