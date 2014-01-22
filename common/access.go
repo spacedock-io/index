@@ -61,6 +61,7 @@ func sendToken(req *f.Request, res *f.Response, access string) {
 
     res.Set("x-docker-token", token.String())
     res.Set("www-authenticate", "Token " + token.String())
+    res.Set("X-Docker-Endpoints", "staging.spacedock.io:8081")
   }
 }
 
