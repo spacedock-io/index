@@ -55,7 +55,7 @@ func UseTokenString(token string) (Token, error) {
     v := strings.Split(v, "=")
     switch v[0] {
       case "signature": t.Signature = v[1]
-      case "repository": t.Repo = v[1]
+      case "repository": t.Repo = strings.Trim(v[1], "\"")
       case "access": t.Access = v[1]
     }
   }
@@ -71,6 +71,6 @@ func UseTokenString(token string) (Token, error) {
 }
 
 func (token *Token) String() string {
-  return fmt.Sprintf("signature=%s,repository=%s,access=%s", token.Signature,
+  return fmt.Sprintf("signature=%s,repository=\"%s\",access=%s", token.Signature,
     token.Repo, token.Access)
 }
