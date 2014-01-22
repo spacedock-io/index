@@ -16,15 +16,19 @@ func CreateRepo(req *f.Request, res *f.Response, next func()) {
   }
 
   ts, err := r.Create("1", u, images.([]interface{}))
-  if err != nil {
+  if err == models.AlreadyExistsErr {
+    res.Send("\"\"", 200)
+    return
+  } else if err != nil {
     res.Send(err.Error(), 400)
+    return
   }
 
   res.Set("X-Docker-Token", ts)
   res.Set("WWW-Authenticate", "Token " + ts)
   res.Set("X-Docker-Endpoints", "staging.spacedock.io:8081")
 
-  res.Send("\"\"", 200)
+  res.Send("\"\"", 201)
 }
 
 func DeleteRepo(req *f.Request, res *f.Response, next func()) {
