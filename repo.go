@@ -72,16 +72,19 @@ func GetUserImage(req *f.Request, res *f.Response, next func()) {
   r, err := models.GetRepo(ns, repo)
   if err != nil {
     res.Send(err.Error(), 400)
+    return
   }
 
   images, e := r.GetImages()
   if e != nil {
     res.Send(e.Error(), 400)
+    return
   }
 
   j, jsonErr := json.Marshal(images)
   if jsonErr != nil {
     res.Send("Error returning data", 400)
+    return
   }
   res.Send(string(j), 200)
 }
